@@ -6,5 +6,16 @@ main.go is a cli:
 - print url for problem
 - duration
 - answer
+- awesome go
+
+ba1c test
+- not testing everything
+- finish
+
+code coverage
+- https://mlafeldt.github.io/blog/test-coverage-in-go/
+- go lint
+- go test
+
 
 

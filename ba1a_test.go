@@ -81,7 +81,7 @@ func TestPatternCountFile(t *testing.T) {
 func GetPatternCountFileContents() (string,string,string) {
     // Read the contents of the input file
     // into a single string
-    dat, err := ioutil.ReadFile("PatternCount.txt")
+    dat, err := ioutil.ReadFile("data/pattern_count.txt")
     check(err)
     contents := string(dat)
 
