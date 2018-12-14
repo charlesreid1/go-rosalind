@@ -204,5 +204,8 @@ func ReverseComplement(input string) (string,error) {
 // Describe the problem, and call the function
 func BA1C() {
     BA1CDescription()
+    input := "AAAACCCGGT"
+    result,_ := ReverseComplement(input)
+    fmt.Printf("Reverse complement of %s is: %s\n",input,result)
 }
 

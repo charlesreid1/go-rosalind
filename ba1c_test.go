@@ -81,3 +81,13 @@ func TestBitmasks2DNA(t *testing.T) {
     }
 }
 
+/*
+Test cases:
+
+AAAACCCGGT
+ACCGGGTTTT
+
+ACACAC
+GTGTGT
+
+*/
