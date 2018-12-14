@@ -6,14 +6,14 @@ import (
     s "strings"
 )
 
-// Rosalind: Problem BA1C: 
+// Rosalind: Problem BA1C: Find the Reverse Complement of a String
 
 // Describe the problem
 func BA1CDescription() {
     description := []string{
         "-----------------------------------------",
         "Rosalind: Problem BA1C:",
-        "asdf",
+        "Find the Reverse Complement of a String",
         "",
         "Given a DNA input string,",
         "find the reverse complement",
@@ -25,6 +25,17 @@ func BA1CDescription() {
     for _, line := range description {
         fmt.Println(line)
     }
+}
+
+// Reverse returns its argument string reversed 
+// rune-wise left to right.
+// https://github.com/golang/example/blob/master/stringutil/reverse.go
+func ReverseString(s string) string {
+    r := []rune(s)
+    for i, j := 0, len(r)-1; i < len(r)/2; i, j = i+1, j-1 {
+        r[i], r[j] = r[j], r[i]
+    }
+    return string(r)
 }
 
 // Given an alleged DNA input string,
@@ -95,23 +106,98 @@ func DNA2Bitmasks(input string) (map[string][]bool,error) {
 }
 
 
+// Convert four bitmasks (one each for ATGC) 
+// into a DNA string.
+func Bitmasks2DNA(bitmasks map[string][]bool) (string,error) {
+
+    // Verify ATGC keys are all present
+    _,Aok := bitmasks["A"]
+    _,Tok := bitmasks["T"]
+    _,Gok := bitmasks["G"]
+    _,Cok := bitmasks["C"]
+    if !(Aok && Tok && Gok && Cok) {
+        err := fmt.Sprintf("Error: input bitmask was missing one of: ATGC (Keys present? A: %t, T: %t, G: %t, C: %t",Aok,Tok,Gok,Cok)
+        return "", errors.New(err)
+    }
+
+    // Hope that all bitmasks are the same size
+    size := len(bitmasks["A"])
+
+    // Make a rune array that we'll turn into 
+    // a string for our final return value
+    dna := make([]rune,size)
+
+    // Iterate over the bitmask, using only 
+    // the index and not the mask value itself
+    for i, _ := range bitmasks["A"] {
+        if bitmasks["A"][i] == true {
+            dna[i] = 'A'
+        } else if bitmasks["T"][i] == true {
+            dna[i] = 'T'
+        } else if bitmasks["G"][i] == true {
+            dna[i] = 'G'
+        } else if bitmasks["C"][i] == true {
+            dna[i] = 'C'
+        }
+    }
+
+    return string(dna),nil
+}
+
+
 // Given a DNA input string, find the
-// reverse complement (that is, swap
-// Gs and Cs, and As and Ts, and reverse
-// the result).
+// complement. The complement swaps
+// Gs and Cs, and As and Ts.
+func Complement(input string) (string,error) {
+
+    // Convert input to uppercase
+    input = s.ToUpper(input)
+
+    // Start by checking whether we have DNA
+    if CheckIsDNA(input)==false {
+        return "", errors.New(fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s",input))
+    }
+
+    m,_ := DNA2Bitmasks(input)
+
+    // Swap As and Ts
+    newT := m["A"]
+    newA := m["T"]
+    m["T"] = newT
+    m["A"] = newA
+
+    // Swap Cs and Gs
+    newG := m["C"]
+    newC := m["G"]
+    m["G"] = newG
+    m["C"] = newC
+
+    output,_ := Bitmasks2DNA(m)
+
+    return output,nil
+}
+
+
+// Given a DNA input string, find the
+// reverse complement. The complement
+// swaps Gs and Cs, and As and Ts.
+// The reverse complement reverses that.
 func ReverseComplement(input string) (string,error) {
 
     // Convert input to uppercase
     input = s.ToUpper(input)
 
-    var complement string
-
     // Start by checking whether we have DNA
     if CheckIsDNA(input)==false {
-        return complement, errors.New(fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s",input))
+        err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s",input)
+        return "", errors.New(err)
     }
 
-    return complement,nil
+    comp,_ := Complement(input)
+
+    revcomp := ReverseString(comp)
+
+    return revcomp,nil
 }
 
 
