@@ -9,7 +9,7 @@ import (
 // are equal. This is necessary because of squirrely
 // behavior when comparing arrays (of type [1]string)
 // and slices (of type []string).
-func EqualArrays(a, b []string) bool {
+func EqualStringSlices(a, b []string) bool {
     for i:=0; i<len(a); i++ {
         if a[i] != b[i] {
             return false
@@ -25,7 +25,7 @@ func TestMostFrequentKmers(t *testing.T) {
     result := MostFrequentKmers(input,k)
     gold := []string{"AAAA"}
 
-    if !EqualArrays(result,gold) {
+    if !EqualStringSlices(result,gold) {
         err := fmt.Sprintf("Error testing MostFrequentKmers(): input = %s, k = %d, result = %s (should be %s)",
             input, k, result, gold)
         t.Error(err)

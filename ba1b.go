@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-// Rosalind: Problem BA1A: Most Frequent k-mers
+// Rosalind: Problem BA1B: Most Frequent k-mers
 
 // Describe the problem
 func BA1BDescription() {
@@ -70,6 +70,7 @@ func MostFrequentKmers(input string, k int) []string {
     return mfks
 }
 
+// Describe the problem, and call the function
 func BA1B() {
     BA1BDescription()
     mfks := MostFrequentKmers("ACGTTGCATGTCGCATGATGCATGAGAGCT",4)
