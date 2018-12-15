@@ -411,3 +411,100 @@ func FindClumps(genome string, k, L, t int) ([]string,error) {
 }
 
 
+////////////////////////////////
+// BA1F
+
+// The skew of a genome is the difference between
+// the number of G and C codons that have occurred
+// cumulatively in a given strand of DNA.
+// This function computes the positions in the genome
+// at which the cumulative skew is minimized.
+func MinSkewPositions(genome string) ([]int,error) {
+
+    n := len(genome)
+    cumulative_skew := make([]int,n)
+
+    // Get C/G bitmasks
+    bitmasks,err := DNA2Bitmasks(genome)
+    if err!=nil {
+        return cumulative_skew,err
+    }
+    c := bitmasks["C"]
+    g := bitmasks["G"]
+
+    // Init
+    cumulative_skew[0] = 0
+
+    // Make space to keep track of the 
+    // minima we have encountered so far
+    min := 999
+    min_skew_ix := []int{}
+
+    // At each position, compute the next skew value.
+    // We need two indices b/c for a genome of size N,
+    // the cumulative skew array index is of size N+1.
+    for i,ibit:=1,0; i<n; i,ibit=i+1,ibit+1 {
+
+        var next int
+        // Next skew value
+        if c[ibit] {
+            // C -1
+            next = -1
+        } else if g[ibit] {
+            // G +1
+            next = 1
+        } else {
+            next = 0
+        }
+        cumulative_skew[i] = cumulative_skew[i-1] + next
+
+        if cumulative_skew[i] < min {
+            // New min and min_skew
+            min = cumulative_skew[i]
+            min_skew_ix = []int{i}
+        } else if cumulative_skew[i] == min {
+            // Additional min and min_skew
+            min_skew_ix = append(min_skew_ix,i)
+        }
+
+    }
+    fmt.Println(cumulative_skew)
+    return min_skew_ix,nil
+}
+
+
+////////////////////////////////
+// BA1G
+
+// Compute the Hamming distance between
+// two strings. The Hamming distance is
+// defined as the number of characters
+// different between two strings.
+func HammingDistance(p, q string) (int,error) {
+
+    // Technically a Hamming distance when
+    // one string is empty would be 0, but
+    // we will throw an error instead.
+    if len(p)==0 || len(q)==0 {
+        err := fmt.Sprintf("Error: HammingDistance: one or more arguments had length 0. len(p) = %d, len(q) = %d",len(p),len(q))
+        return -1,errors.New(err)
+    }
+
+    // Get longest length common to both
+    var m int
+    if len(p)>len(q) {
+        m = len(q)
+    } else {
+        m = len(p)
+    }
+
+    // Accumulate distance
+    dist := 0
+    for i:=0; i<m; i++ {
+        if p[i]!=q[i] {
+            dist += 1
+        }
+    }
+    return dist,nil
+}
+
