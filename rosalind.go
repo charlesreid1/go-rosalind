@@ -422,7 +422,7 @@ func FindClumps(genome string, k, L, t int) ([]string,error) {
 func MinSkewPositions(genome string) ([]int,error) {
 
     n := len(genome)
-    cumulative_skew := make([]int,n)
+    cumulative_skew := make([]int,n+1)
 
     // Get C/G bitmasks
     bitmasks,err := DNA2Bitmasks(genome)
@@ -443,7 +443,7 @@ func MinSkewPositions(genome string) ([]int,error) {
     // At each position, compute the next skew value.
     // We need two indices b/c for a genome of size N,
     // the cumulative skew array index is of size N+1.
-    for i,ibit:=1,0; i<n; i,ibit=i+1,ibit+1 {
+    for i,ibit:=1,0; i<=n; i,ibit=i+1,ibit+1 {
 
         var next int
         // Next skew value
@@ -468,7 +468,6 @@ func MinSkewPositions(genome string) ([]int,error) {
         }
 
     }
-    fmt.Println(cumulative_skew)
     return min_skew_ix,nil
 }
 

@@ -5,5 +5,7 @@ func main() {
     //BA1B()
     //BA1C()
     //BA1D()
-    BA1E()
+    //BA1E()
+    BA1F()
+    //BA1G()
 }

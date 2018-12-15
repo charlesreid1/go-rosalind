@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "sort"
     "testing"
 )
 
@@ -24,13 +25,27 @@ func TestMatrixMinSkewPosition(t *testing.T) {
                 []int{2,6}},
     }
     for _, test := range tests {
-        result,err := FindClumps(test.genome,
-                test.k, test.L, test.t)
+
+        // Do it - find the positions that minimize skew
+        result,err := MinSkewPositions(test.genome)
         if err!=nil {
             t.Error(err)
         }
-        if !EqualStringSlices(result,test.gold) {
-            err := fmt.Sprintf("Error testing FindClumps(): k = %d, L = %d, t = %d",test.k,test.L,test.t)
+
+        // Check length of result
+        if len(result)!=len(test.gold) {
+            err := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nlength of result (%d) did not match length of gold standard (%d).\nFound: %v\nShould be: %v",
+                    test.genome, len(result), len(test.gold),
+                    result, test.gold)
+            t.Error(err)
+        }
+
+        // Sort before comparing
+        sort.Ints(result)
+        sort.Ints(test.gold)
+        if !EqualIntSlices(result,test.gold) {
+            err := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nfound: %v\nshould be: %v",
+                    test.genome, result, test.gold)
             t.Error(err)
         }
     }
