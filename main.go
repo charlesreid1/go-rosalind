@@ -6,6 +6,6 @@ func main() {
     //BA1C()
     //BA1D()
     //BA1E()
-    BA1F()
-    //BA1G()
+    //BA1F()
+    BA1G()
 }
