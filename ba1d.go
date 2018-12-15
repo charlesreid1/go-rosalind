@@ -25,7 +25,8 @@ func BA1DDescription() {
     }
 }
 
-
+// Given a large string (genome) and a substring (pattern),
+// find the zero-based indices where pattern occurs in genome.
 func FindOccurrences(pattern, genome string) ([]int,error) {
     locations := []int{}
     slots := len(genome)-len(pattern)+1

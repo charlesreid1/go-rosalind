@@ -62,10 +62,22 @@ func KmerHistogram(input string, k int) (map[string]int,error) {
 
 // Find the most frequent kmer(s) in the kmer histogram,
 // and return as a string array
-func MostFrequentKmers(input string, k int) []string {
-    khist,_ := KmerHistogram(input,k)
+func MostFrequentKmers(input string, k int) ([]string,error) {
     max := 0
     mfks := []string{}
+
+    if k<1 {
+        err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d",k)
+        return mfks, errors.New(err)
+    }
+
+    khist,err := KmerHistogram(input,k)
+
+    if err != nil {
+        err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
+        return mfks, errors.New(err)
+    }
+
     for kmer,freq := range khist {
         if freq > max {
             // We have a new maximum, and a new set of kmers
@@ -76,13 +88,13 @@ func MostFrequentKmers(input string, k int) []string {
             mfks = append(mfks,kmer)
         }
     }
-    return mfks
+    return mfks,nil
 }
 
 // Describe the problem, and call the function
 func BA1B() {
     BA1BDescription()
-    mfks := MostFrequentKmers("ACGTTGCATGTCGCATGATGCATGAGAGCT",4)
+    mfks,_ := MostFrequentKmers("ACGTTGCATGTCGCATGATGCATGAGAGCT",4)
     fmt.Println("MostFrequentKmer(ACGTTGCATGTCGCATGATGCATGAGAGCT) yields:")
     fmt.Println(mfks)
 }

@@ -65,9 +65,26 @@ func TestPatternCounts(t *testing.T) {
 // and verify the output matches the output
 // contained in the file.
 func TestPatternCountFile(t *testing.T) {
+
+    // Extract inputs/outputs from file
     input, pattern, output := GetPatternCountFileContents()
-    int_output, _ := strconv.Atoi(output)
+
+    // Delete \r
+    input   = strings.Replace(input, "\r", "", -1)
+    pattern = strings.Replace(pattern, "\r", "", -1)
+    output  = strings.Replace(output, "\r", "", -1)
+
+    // Convert output to an integer
+    o64, err := strconv.ParseInt(output,10,64)
+    if err!=nil {
+        t.Error(err)
+    }
+    int_output := int(o64)
+
+    // Call the function with the given inputs
     result := PatternCount(input, pattern)
+
+    // Verify answer
     if result != int_output {
         err := fmt.Sprintf("Error testing PatternCount using test case from file: results do not match:\rcomputed result = %d\nexpected output = %d",result,int_output)
         t.Error(err)

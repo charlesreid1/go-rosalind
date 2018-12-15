@@ -81,13 +81,16 @@ func TestBitmasks2DNA(t *testing.T) {
     }
 }
 
-/*
-Test cases:
+// Run a test of the function that computes
+// the ReverseComplement of a DNA string.
+func TestReverseComplement(t *testing.T) {
+    input := "AAAACCCGGT"
+    result,_ := ReverseComplement(input)
+    gold := "ACCGGGTTTT"
+    if result!=gold {
+        err := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
+            input, result, gold)
+        t.Error(err)
+    }
+}
 
-AAAACCCGGT
-ACCGGGTTTT
-
-ACACAC
-GTGTGT
-
-*/
