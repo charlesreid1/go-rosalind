@@ -27,7 +27,7 @@ func TestPatternCount(t *testing.T) {
 }
 
 // Run a test matrix of the PatternCount function
-func TestPatternCounts(t *testing.T) {
+func TestMatrixPatternCount(t *testing.T) {
     // Construct a test matrix
     var tests = []struct {
 		input    string
@@ -98,8 +98,8 @@ func TestPatternCountFile(t *testing.T) {
 func GetPatternCountFileContents() (string,string,string) {
     // Read the contents of the input file
     // into a single string
-    dat, err := ioutil.ReadFile("data/pattern_count.txt")
-    check(err)
+    dat, _ := ioutil.ReadFile("data/pattern_count.txt")
+    //check(err)
     contents := string(dat)
 
     // Buncha index algebra

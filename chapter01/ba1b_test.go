@@ -5,22 +5,9 @@ import (
     "sort"
     "strings"
     "strconv"
-    "io/ioutil"
+    "log"
     "testing"
 )
-
-// Utility function: check if two arrays/array slices
-// are equal. This is necessary because of squirrely
-// behavior when comparing arrays (of type [1]string)
-// and slices (of type []string).
-func EqualStringSlices(a, b []string) bool {
-    for i:=0; i<len(a); i++ {
-        if a[i] != b[i] {
-            return false
-        }
-    }
-    return true
-}
 
 // Run a test of the MostFrequentKmers function
 func TestMostFrequentKmers(t *testing.T) {
@@ -91,25 +78,20 @@ func TestMostFrequentKmersFile(t *testing.T) {
 // Get input and output information for the MostFrequentKmers
 // test from the corresponding file.
 func GetMostFrequentKmersFileContents() (string,string,string) {
+
+    filename := "data/frequent_words.txt"
+
     // Read the contents of the input file
     // into a single string
-    dat, err := ioutil.ReadFile("data/frequent_words.txt")
-    check(err)
-    contents := string(dat)
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("readLines: %v",err)
+    }
 
-    // Buncha index algebra
-    ix_input_start  := strings.Index(contents,"Input")
-    ix_input_end    := ix_input_start + len("Input")
-    ix_output_start := strings.Index(contents,"Output")
-    ix_output_end   := ix_output_start + len("Output")
-    ix_file_end     := len(contents)
+    dna  := lines[1]
+    k    := lines[2]
+    gold := strings.Join(lines[4:]," ")
 
-    input_contents  := strings.Split(contents[ix_input_end:ix_output_start],"\n")
-    input_contents   = input_contents[1:len(input_contents)-1]
-
-    output_contents := strings.Split(contents[ix_output_end:ix_file_end],"\n")
-    output_contents  = output_contents[1:len(output_contents)-1]
-
-    return input_contents[0], input_contents[1], output_contents[0]
+    return dna, k, gold
 }
 
