@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "log"
+    "strings"
     "strconv"
 )
 
@@ -52,6 +53,6 @@ func BA1B(filename string) {
 
     fmt.Println("")
     fmt.Printf("Computed result from input file: %s\n",filename)
-    fmt.Println(mfks)
+    fmt.Println(strings.Join(mfks," "))
 }
 
