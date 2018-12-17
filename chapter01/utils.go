@@ -65,3 +65,15 @@ func EqualBoolSlices(a, b []bool) bool {
     return true
 }
 
+// Utility function: check if two int arrays/array slices
+// are equal.
+func EqualIntSlices(a, b []int) bool {
+    for i:=0; i<len(a); i++ {
+        if a[i] != b[i] {
+            return false
+        }
+    }
+    return true
+}
+
+
