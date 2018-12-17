@@ -18,7 +18,12 @@ func readLines(path string) ([]string, error) {
     var lines []string
     scanner := bufio.NewScanner(file)
     buf := make([]byte, 2)
-    scanner.Buffer(buf, 90000)
+
+    // This is awkward.
+    // Scanners aren't good for big files,
+    // just simple stuff.
+    BIGNUMBER := 90000
+    scanner.Buffer(buf, BIGNUMBER)
     for scanner.Scan() {
         lines = append(lines, scanner.Text())
     }

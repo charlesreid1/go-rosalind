@@ -53,9 +53,9 @@ func BA1H(filename string) {
     approx_str := make([]string,len(approx))
     for i,j := range approx {
         approx_str[i] = strconv.Itoa(j)
-        //if err!=nil {
-        //    log.Fatalf("Error: conversion from int to string: %v",err)
-        //}
+        if err!=nil {
+            log.Fatalf("Error: conversion from int to string: %v",err)
+        }
     }
 
     fmt.Println("")
