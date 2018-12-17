@@ -17,6 +17,8 @@ func readLines(path string) ([]string, error) {
 
     var lines []string
     scanner := bufio.NewScanner(file)
+    buf := make([]byte, 2)
+    scanner.Buffer(buf, 90000)
     for scanner.Scan() {
         lines = append(lines, scanner.Text())
     }

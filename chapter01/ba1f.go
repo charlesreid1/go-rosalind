@@ -2,6 +2,8 @@ package main
 
 import (
     "fmt"
+    "strings"
+    "strconv"
     "log"
 )
 
@@ -46,8 +48,13 @@ func BA1F(filename string) {
 
     minskew,_ := MinSkewPositions(genome)
 
+    minskew_str := make([]string,len(minskew))
+    for i,j := range minskew {
+        minskew_str[i] = strconv.Itoa(j)
+    }
+
     fmt.Println("")
     fmt.Printf("Computed result from input file: %s\n",filename)
-    fmt.Println(minskew)
+    fmt.Println(strings.Join(minskew_str," "))
 }
 

@@ -2,6 +2,8 @@ package main
 
 import (
     "fmt"
+    "strconv"
+    "strings"
     "log"
 )
 
@@ -40,13 +42,20 @@ func BA1D(filename string) {
     }
 
     // Input file contents
-    genome  := lines[0]
-    pattern := lines[1]
+    pattern := lines[0]
+    genome  := lines[1]
 
+    // Result is a slice of ints
     locs,_ := FindOccurrences(pattern,genome)
+
+    // Convert to a slice of strings for easier printing
+    locs_str := make([]string,len(locs))
+    for i,j := range locs {
+        locs_str[i] = strconv.Itoa(j)
+    }
 
     fmt.Println("")
     fmt.Printf("Computed result from input file: %s\n",filename)
-    fmt.Println(locs)
+    fmt.Println(strings.Join(locs_str," "))
 }
 

@@ -30,7 +30,13 @@ strings and data structures.
 * Each problem has one Go file and one test
 
 * The `data/` directory contains input files
-  for the tests
+  for the tests (i.e., files that contain both
+  inputs and corresponding outputs)
+
+* The `for_real/` directory contains sample 
+  input files from Rosalind.info for each
+  problem (i.e., files that contain only the
+  inputs)
 
 * The `main.go` file contains the `main()` 
   driver function and is the entrypoint for

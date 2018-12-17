@@ -53,6 +53,6 @@ func BA1E(filename string) {
 
     fmt.Println("")
     fmt.Printf("Computed result from input file: %s\n",filename)
-    fmt.Println(patterns)
+    fmt.Println(strings.Join(patterns," "))
 }
 
