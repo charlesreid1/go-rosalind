@@ -2,6 +2,9 @@ package main
 
 import (
     "fmt"
+    "log"
+    "strings"
+    "strconv"
 )
 
 // Rosalind: Problem BA1E: Find patterns forming clumps in a string
@@ -26,13 +29,30 @@ func BA1EDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1E() {
+func BA1E(filename string) {
+
     BA1EDescription()
-    genome := "CGGACTCGACAGATGTGAAGAAATGTGAAGACTGAGTGAAGAGAAGAGGAAACACGACACGACATTGCGACATAATGTACGAATGTAATGTGCCTATGGC"
-    k := 5
-    L := 75
-    t := 4
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    genome := lines[0]
+    params_str := lines[1]
+    params_slice := strings.Split(params_str," ")
+
+    k,_ := strconv.Atoi(params_slice[0])
+    L,_ := strconv.Atoi(params_slice[1])
+    t,_ := strconv.Atoi(params_slice[2])
+
     patterns,_ := FindClumps(genome,k,L,t)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
     fmt.Println(patterns)
 }
 

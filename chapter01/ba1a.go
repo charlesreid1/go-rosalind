@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "log"
+)
 
 // Rosalind: Problem BA1A: Most Frequent k-mers
 
@@ -23,10 +26,29 @@ func BA1ADescription() {
     }
 }
 
-// Describe the problem, and call the function
-func BA1A() {
+// Describe the problem,
+// print the name of the input file,
+// print the output/result
+func BA1A(filename string) {
+
     BA1ADescription()
-    res := PatternCount("GCGCG","GCG")
-    fmt.Println("PatternCount(GCGCG,GCG) yields:",res)
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("readLines: %v",err)
+    }
+
+    // Input file contents
+    var input, pattern string
+    input   = lines[0]
+    pattern = lines[1]
+
+    result := PatternCount(input, pattern)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
+    fmt.Println(result)
 }
 

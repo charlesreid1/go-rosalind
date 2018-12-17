@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "log"
 )
 
 // Rosalind: Problem BA1G: Find Hamming distance between two DNA strings
@@ -27,11 +28,25 @@ func BA1GDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1G() {
+func BA1G(filename string) {
+
     BA1GDescription()
-    p := "GGGCCGTTGGT"
-    q := "GGACCGTTGAC"
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    p := lines[0]
+    q := lines[1]
+
     hamm,_ := HammingDistance(p,q)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
     fmt.Println(hamm)
 }
 

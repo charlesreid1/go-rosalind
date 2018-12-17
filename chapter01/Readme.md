@@ -3,24 +3,45 @@
 In this chapter we perform basic operations with 
 strings and data structures.
 
+## How to run
+
+* Each problem has its own function
+
+* To run the code for a particular problem,
+  call the function for that problem in `main.go`
+
+* Edit `main.go` to call the right function,
+  and pass in the name of the input file you 
+  want to use: for example, `BA1A("input.txt")`
+  
+* The function you call is implemented in the
+  corresponding Go file (for example, `ba1a.go`).
+  It loads the inputs from the input file,
+  calls the right function with the inputs,
+  and prints the results.
+
+* The functions that load data from input files
+  are tested along with the functions themselves,
+  since each problem has a sample input file 
+  in `data/`
 
 ## Directory Layout
 
-Each problem has one corresponding Go file.
-The Go file contains a function that prints
-a summary of the problem, and solves the
-problem for a simple case.
+* Each problem has one Go file and one test
 
-The bulk of functionality is in Go functions
-in `rosalind.go`, to make it easier to add
-and share functions.
+* The `data/` directory contains input files
+  for the tests
 
-The `main.go` file is the driver and can be
-used to run individual problems.
+* The `main.go` file contains the `main()` 
+  driver function and is the entrypoint for
+  `go run`
 
-The `*_test.go` files run tests for each
-problem using the example solutions provided
-by Rosalind.
+* The `rosalind.go` file contains most of the
+  computational functionality implemented
+  for the problems.
+
+* The `utils.go` file contains utilties unrelated
+  to bioinformatics.
 
 ## Compiling and Running
 
@@ -35,6 +56,12 @@ to call the corresponding problem's function
 and then `go run`:
 
 ```
-go run main.go rosalind.go <name of ba1 file.go> 
+go run main.go utils.go rosalind.go <name of ba1 file.go> 
 ```
+
+## To Do
+
+Add a Snakefile
+
+
 

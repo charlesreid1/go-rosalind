@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "log"
 )
 
 // Rosalind: Problem BA1C: Find the Reverse Complement of a String
@@ -26,10 +27,24 @@ func BA1CDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1C() {
+func BA1C(filename string) {
+
     BA1CDescription()
-    input := "AAAACCCGGT"
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    input := lines[0]
+
     result,_ := ReverseComplement(input)
-    fmt.Printf("Reverse complement of %s is: %s\n",input,result)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
+    fmt.Println(result)
 }
 

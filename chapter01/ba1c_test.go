@@ -5,19 +5,11 @@ import (
     "testing"
 )
 
-func EqualBoolSlices(a, b []bool) bool {
-    for i:=0; i<len(a); i++ {
-        if a[i] != b[i] {
-            return false
-        }
-    }
-    return true
-}
-
 // Check that the DNA2Bitmasks utility
 // extracts the correct bitmasks from
 // a DNA input string.
 func TestDNA2Bitmasks(t *testing.T) {
+
     input := "AATCCGCT"
 
     result, func_err := DNA2Bitmasks(input)
@@ -87,6 +79,41 @@ func TestReverseComplement(t *testing.T) {
     input := "AAAACCCGGT"
     result,_ := ReverseComplement(input)
     gold := "ACCGGGTTTT"
+    if result!=gold {
+        err := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
+            input, result, gold)
+        t.Error(err)
+    }
+}
+
+
+// Run a test of the ReverseComplement function
+// using inputs/outputs from a file.
+func TestReverseComplementFile(t *testing.T) {
+
+    filename := "data/reverse_complement.txt"
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        t.Error(err)
+    }
+
+    // lines[0]: Input
+    input := lines[1]
+    // lines[2]: Output
+    gold := lines[3]
+
+    // Call the function with the given inputs
+    result, err := ReverseComplement(input)
+
+    // Check that there _was_ a result
+    if len(result)==0 {
+        err := fmt.Sprintf("Error testing ReverseComplement using test case from file")
+        t.Error(err)
+    }
+
     if result!=gold {
         err := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
             input, result, gold)

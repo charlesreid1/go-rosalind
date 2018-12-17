@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "log"
 )
 
 // Rosalind: Problem BA1D: Find all occurrences of pattern in string
@@ -27,11 +28,25 @@ func BA1DDescription() {
 
 
 // Describe the problem, and call the function
-func BA1D() {
+func BA1D(filename string) {
+
     BA1DDescription()
-    genome := "GATATATGCATATACTT"
-    pattern := "ATAT"
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    genome  := lines[0]
+    pattern := lines[1]
+
     locs,_ := FindOccurrences(pattern,genome)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
     fmt.Println(locs)
 }
 

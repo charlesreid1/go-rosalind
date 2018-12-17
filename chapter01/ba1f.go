@@ -2,6 +2,7 @@ package main
 
 import (
     "fmt"
+    "log"
 )
 
 // Rosalind: Problem BA1F: Find positions in a gene that minimizing skew
@@ -29,12 +30,24 @@ func BA1FDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1F() {
+func BA1F(filename string) {
+
     BA1FDescription()
-    //genome := "CATGGGCATCGGCCATACGCC"
-    genome := "CCTATCGGTGGATTAGCATGTCCCTGTACGTTTCGCCGCGAACTAGTTCACACGGCTTGATGGCAAATGGTTTTTCCGGCGACCGTAATCGTCCACCGAG"
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    genome := lines[0]
+
     minskew,_ := MinSkewPositions(genome)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
     fmt.Println(minskew)
 }
-
 

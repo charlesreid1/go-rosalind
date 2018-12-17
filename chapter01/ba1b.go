@@ -2,6 +2,8 @@ package main
 
 import (
     "fmt"
+    "log"
+    "strconv"
 )
 
 // Rosalind: Problem BA1B: Most Frequent k-mers
@@ -26,10 +28,30 @@ func BA1BDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1B() {
+func BA1B(filename string) {
+
     BA1BDescription()
-    mfks,_ := MostFrequentKmers("ACGTTGCATGTCGCATGATGCATGAGAGCT",4)
-    fmt.Println("MostFrequentKmer(ACGTTGCATGTCGCATGATGCATGAGAGCT) yields:")
+
+    // Read the contents of the input file
+    // into a single string
+    lines, err := readLines(filename)
+    if err != nil {
+        log.Fatalf("Error: readLines: %v",err)
+    }
+
+    // Input file contents
+    input := lines[0]
+    k_str := lines[1]
+
+    k,err := strconv.Atoi(k_str)
+    if err!=nil {
+        log.Fatalf("Error: string to int conversion: %v",err)
+    }
+
+    mfks,_ := MostFrequentKmers(input,k)
+
+    fmt.Println("")
+    fmt.Printf("Computed result from input file: %s\n",filename)
     fmt.Println(mfks)
 }
 

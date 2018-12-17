@@ -3,8 +3,8 @@ package main
 import (
     "fmt"
     "sort"
-    "strings"
     "strconv"
+    "strings"
     "log"
     "testing"
 )
@@ -32,53 +32,6 @@ func TestMostFrequentKmers(t *testing.T) {
 // using inputs/outputs from a file.
 func TestMostFrequentKmersFile(t *testing.T) {
 
-    // Extract inputs/outputs from file
-    input, k, output := GetMostFrequentKmersFileContents()
-
-    // Delete \r
-    output = strings.Replace(output, "\r", "", -1)
-    k      = strings.Replace(k,      "\r", "", -1)
-
-    // Convert k to integer
-    i64, err := strconv.ParseInt(k,10,64)
-    if err!=nil {
-        t.Error(err)
-    }
-    int_k := int(i64)
-
-    // Split the gold standard output
-    // by spaces, to get a string array slice.
-    slice_output := strings.Split(output," ")
-
-    // Call the function with the given inputs
-    result, err := MostFrequentKmers(input,int_k)
-
-    // Check if function threw error
-    if err!=nil {
-        t.Error(err)
-    }
-
-    // Check that there _was_ a result
-    if len(result)==0 {
-        err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: length of most frequent kmers found was 0: %q",result)
-        t.Error(err)
-    }
-
-    // Sort before comparing
-    sort.Strings(slice_output)
-    sort.Strings(result)
-
-    // These will only be unequal if something went wrong
-    if !EqualStringSlices(slice_output,result) {
-        err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers mismatch.\ncomputed = %q\ngold = %q\n",result,slice_output)
-        t.Error(err)
-    }
-}
-
-// Get input and output information for the MostFrequentKmers
-// test from the corresponding file.
-func GetMostFrequentKmersFileContents() (string,string,string) {
-
     filename := "data/frequent_words.txt"
 
     // Read the contents of the input file
@@ -88,10 +41,42 @@ func GetMostFrequentKmersFileContents() (string,string,string) {
         log.Fatalf("readLines: %v",err)
     }
 
-    dna  := lines[1]
-    k    := lines[2]
-    gold := strings.Join(lines[4:]," ")
+    // lines[0]: Input
+    dna   := lines[1]
+    k_str := lines[2]
+    // lines[3]: Output
+    gold  := strings.Split(lines[4]," ")
 
-    return dna, k, gold
+    // Convert k to integer
+    k,err := strconv.Atoi(k_str)
+    if err!=nil {
+        t.Error(err)
+    }
+
+    // Call the function with the given inputs
+    result, err := MostFrequentKmers(dna,k)
+
+    // Check if function threw error
+    if err!=nil {
+        t.Error(err)
+    }
+
+    // Check that there _was_ a result
+    if len(result)==0 {
+        err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: length of most frequent kmers found was 0: %q",
+                result)
+        t.Error(err)
+    }
+
+    // Sort before comparing
+    sort.Strings(gold)
+    sort.Strings(result)
+
+    // These will only be unequal if something went wrong
+    if !EqualStringSlices(gold,result) {
+        err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers mismatch.\ncomputed = %q\ngold     = %q\n",
+                result,gold)
+        t.Error(err)
+    }
 }
 
