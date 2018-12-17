@@ -335,7 +335,7 @@ func ReverseComplement(input string) (string,error) {
 // BA1D
 
 
-// Given a large string (genome) and a substring (pattern),
+// Given a large string (genome) and a string (pattern),
 // find the zero-based indices where pattern occurs in genome.
 func FindOccurrences(pattern, genome string) ([]int,error) {
     locations := []int{}
@@ -506,4 +506,40 @@ func HammingDistance(p, q string) (int,error) {
     }
     return dist,nil
 }
+
+
+////////////////////////////////
+// BA1H
+
+
+// Given a large string (text) and a string (pattern),
+// find the zero-based indices where we have an occurrence
+// of pattern or a string with Hamming distance d or less
+// from pattern.
+func FindApproximateOccurrences(pattern, text string, d int) ([]int,error) {
+
+    locations := []int{}
+    slots := len(text)-len(pattern)+1
+
+    if slots<1 {
+        // pattern is longer than genome
+        return locations,nil
+    }
+
+    // Loop over each character,
+    // saving the position if it
+    // is the start of pattern
+    for i:=0; i<slots; i++ {
+        start := i
+        end := i+len(pattern)
+        poss_approx_pattern := text[start:end]
+        hamm,_ := HammingDistance(poss_approx_pattern,pattern)
+        if hamm<=d {
+            locations = append(locations,i)
+        }
+    }
+
+    return locations,nil
+}
+
 

@@ -45,6 +45,9 @@ func writeLines(lines []string, path string) error {
 // behavior when comparing arrays (of type [1]string)
 // and slices (of type []string).
 func EqualStringSlices(a, b []string) bool {
+    if len(a)!=len(b) {
+        return false
+    }
     for i:=0; i<len(a); i++ {
         if a[i] != b[i] {
             return false
@@ -59,6 +62,9 @@ func EqualStringSlices(a, b []string) bool {
 // behavior when comparing arrays (of type [1]bool)
 // and slices (of type []bool).
 func EqualBoolSlices(a, b []bool) bool {
+    if len(a)!=len(b) {
+        return false
+    }
     for i:=0; i<len(a); i++ {
         if a[i] != b[i] {
             return false
@@ -70,6 +76,9 @@ func EqualBoolSlices(a, b []bool) bool {
 // Utility function: check if two int arrays/array slices
 // are equal.
 func EqualIntSlices(a, b []int) bool {
+    if len(a)!=len(b) {
+        return false
+    }
     for i:=0; i<len(a); i++ {
         if a[i] != b[i] {
             return false
