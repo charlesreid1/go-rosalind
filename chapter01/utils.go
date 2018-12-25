@@ -78,8 +78,7 @@ func EqualBoolSlices(a, b []bool) bool {
     return true
 }
 
-// Utility function: check if two int arrays/array slices
-// are equal.
+// Check if two int arrays/array slices are equal.
 func EqualIntSlices(a, b []int) bool {
     if len(a)!=len(b) {
         return false
@@ -92,4 +91,36 @@ func EqualIntSlices(a, b []int) bool {
     return true
 }
 
+// Compute the factorial of an integer.
+func Factorial(n int) (int) {
+    if n<2 {
+        // base case
+        return 1
+    } else {
+        // recursive case
+        return n*Factorial(n-1)
+    }
+}
+
+// Returns value of Binomial Coefficient Binom(n, k).
+func Binomial(n, k int) (int) {
+
+    result := 1
+
+    // Since C(n, k) = C(n, n-k)
+    if k > (n-k) {
+        k = n-k
+    }
+
+    // Calculate value of:
+    // ( n * (n-1) * ... * (n-k+1) )
+    // -----------------------------
+    //   ( k * (k-1) * ... * 1 )
+    for i:=0; i<k; i++ {
+        result *= n - i
+        result /= i + 1
+    }
+
+    return result
+}
 
