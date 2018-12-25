@@ -58,12 +58,12 @@ func PatternCount(input string, pattern string) int {
 // found in the given input
 func KmerHistogram(input string, k int) (map[string]int,error) {
 
-    result := map[string]int{}
-
     if len(input)<1 {
         err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s",input)
-        return result, errors.New(err)
+        return nil, errors.New(err)
     }
+
+    result := map[string]int{}
 
     // Number of substring overlaps
     overlap := len(input) - k + 1
@@ -168,6 +168,7 @@ func ReverseString(s string) string {
     return string(r)
 }
 
+
 // Given an alleged DNA input string,
 // iterate through it character by character
 // to ensure that it only contains ATGC.
@@ -188,6 +189,7 @@ func CheckIsDNA(input string) bool {
     // If we made it here, everything's gravy!
     return true
 }
+
 
 // Convert a DNA string into four bitmasks:
 // one each for ATGC. That is, for the DNA
@@ -363,6 +365,7 @@ func FindOccurrences(pattern, genome string) ([]int,error) {
 ////////////////////////////////
 // BA1E
 
+
 // Find k-mers (patterns) of length k occuring at least
 // t times over an interval of length L in a genome. 
 func FindClumps(genome string, k, L, t int) ([]string,error) {
@@ -413,6 +416,7 @@ func FindClumps(genome string, k, L, t int) ([]string,error) {
 
 ////////////////////////////////
 // BA1F
+
 
 // The skew of a genome is the difference between
 // the number of G and C codons that have occurred
@@ -474,6 +478,7 @@ func MinSkewPositions(genome string) ([]int,error) {
 
 ////////////////////////////////
 // BA1G
+
 
 // Compute the Hamming distance between
 // two strings. The Hamming distance is
@@ -543,3 +548,297 @@ func FindApproximateOccurrences(pattern, text string, d int) ([]int,error) {
 }
 
 
+////////////////////////////////
+// BA1i
+
+
+// Count the number of times a given kmer
+// and any Hamming neighbors (distance d
+// or less) occur in the input string.
+func CountKmersMismatches(input string, k, d int) (int, error) {
+    // Note this skips step 1 of most frequent
+    // (extract all kmers and get a list of all variants)
+    // and goes straight to step 2
+    // (given a kmer, increment count of all its variants)
+    return 0, nil
+}
+
+
+// Find the most frequent kmer(s) of length k
+// in the given input string. Include mismatches
+// of Hamming distance <= d.
+func MostFrequentKmersMismatches(input string, k, d int) ([]string,error) {
+
+    max := 0
+
+    // most frequent kmers
+    mfks := []string{}
+
+    if k<1 {
+        err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d",k)
+        return mfks, errors.New(err)
+    }
+
+    khist,err := KmerHistogramMismatches(input,k,d)
+
+    if err != nil {
+        err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
+        return mfks, errors.New(err)
+    }
+
+    for kmer,freq := range khist {
+        if freq > max {
+            // We have a new maximum, and a new set of kmers
+            max = freq
+            mfks = []string{kmer}
+        } else if freq==max {
+            // We have another maximum
+            mfks = append(mfks,kmer)
+        }
+    }
+    return mfks,nil
+}
+
+
+// Return the histogram of all kmers of length k 
+// that are in the input, or whose Hamming neighbors 
+// within distance d are in the input.
+func KmerHistogramMismatches(input string, k, d int) (map[string]int,error) {
+
+    // Make sure our input string is well-formed
+    if !CheckIsDNA(input) {
+        err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s",input)
+        return nil, errors.New(err)
+    }
+
+    // Number of substring overlaps
+    overlap := len(input) - k + 1
+
+    // If overlap < 1, we are looking
+    // for kmers longer than our input
+    if overlap<1 {
+        err := fmt.Sprintf("Error: looking for kmer longer than input string (len(kmer) = %d, len(input) = %d).",k,len(input))
+        return nil, errors.New(err)
+    }
+
+    // Algorithm:
+    // -----------
+    // 
+    // Make two passes over the input string.
+    // 
+    // Pass 1:
+    // - Assemble a mapping of each kmer to its Hamming neighbors
+    //   so we know which kmers to increment when we see one
+    //   (generating all permutations is tiresome and expensive,
+    //   so we only want to do it once)
+    // 
+    // Pass 2:
+    // - Extract each kmer, get its Hamming neighbors,
+    //   increment all of them
+
+
+    /////////////////////////////////////
+    // Pass 1:
+    // 
+    // Assemble a mapping of each kmer to its Hamming neighbors.
+    //
+    // For each window in overlap:
+    //     extract the kmer at window
+    //     find all permutations of given string
+    //     add kmer as key, variants as value
+
+    hamm_neighbors := map[string][]string{}
+
+    // Iterate over each position
+    for i:=0; i<overlap; i++ {
+
+        // TODO goroutines 1:
+        // Spawn goroutines, and block
+        // until all return results
+
+        // Get the kmer of interest
+        kmer := input[i:i+k]
+
+        // Find Hamming neighbors
+        neighbors, err := VisitHammingNeighbors(kmer,d)
+        if err != nil {
+            err := fmt.Sprintf("Error: failed to visit Hamming neighbors for kmer %s (d = %d)",kmer,d)
+            return nil, errors.New(err)
+        }
+
+        // Increment the count
+        hamm_neighbors[kmer] = neighbors
+    }
+
+
+    /////////////////////////////////////
+    // Pass 2:
+    // 
+    // Extract each kmer and increment all of its
+    // neighbor kmers.
+
+    result := map[string]int{}
+
+    // Iterate over each position
+    for i:=0; i<overlap; i++ {
+
+        // TODO goroutines 2:
+        // Spawn goroutines, and block
+        // until all return results
+
+        // Get the kmer of interest
+        kmer := input[i:i+k]
+
+        // Get the hamming neighbors
+        neighbors := hamm_neighbors[kmer]
+
+        // Increment count for kmer and neighbors
+        result[kmer] += 1
+        for _,neighbor := range neighbors {
+            result[neighbor] += 1
+        }
+
+    }
+
+    return result,nil
+}
+
+
+// Given an input string of DNA, generate variants
+// of said string that are a Hamming distance of 
+// less than or equal to d.
+func VisitHammingNeighbors(input string, d int) ([]string, error) {
+    // a.k.a. visit_kmer_neighbors
+
+    // number of codons
+    n_codons := 4
+
+    // Use combinatorics to calculate number
+    // of permutations
+    buffsize := 0
+    for dd:=0; dd<=d; dd++ {
+
+        next_term := Binomial(len(input),dd)
+        // old fashioned Pow() function
+        for j:=0; j<dd; j++ {
+            next_term *= (n_codons-1)
+        }
+        buffsize += next_term
+
+    }
+
+    // We need to store all permutations,
+    // but the number of permutations will
+    // blow up fast, so cut off at some point
+    MAX := 100000
+    if buffsize > MAX {
+        err := fmt.Sprintf("Error: you are generating over MAX = %d permutations, you probably don't want to do this.",d)
+        return nil, errors.New(err)
+    }
+
+    // Make a channel
+    results := make(chan string, buffsize+10)
+
+    // Algorithm:
+    // ------------
+    // 
+    // For each depth up to the maximum,
+    // begin a recursive function call stack
+    // that progressively picks an index to
+    // change, then calls itself with a depth
+    // parameter decreased by 1.
+
+    // Careful of your index here:
+    // - include dd=0 (original kmer)
+    // - include dd=d (max depth)
+    for dd:=0; dd<=d; dd++ {
+
+        // The choices array will change with each recursive call.
+        // Go passes all arguments by copy, which is good for us.
+        choices := []int{}
+
+        // Populate list of neighbors
+        visitHammingNeighbors_recursive(input,dd,choices,results)
+
+    }
+
+    // Add them to the resulting list of hamming neighbors
+    permutations := make([]string, buffsize)
+    for k:=0; k<buffsize; k++ {
+        permutations[k] = <-results
+    }
+
+    return permutations, nil
+}
+
+
+// Recursive function: given an input string of DNA,
+// generate Hamming neighbors that are a Hamming
+// distance of exactly d. Populate the neighbors
+// array with the resulting neighbors.
+func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int, results chan<- string) error {
+
+    if depth==0 {
+
+        // Base case
+        go visit(base_kmer,choices,results)
+        return nil
+
+    } else {
+
+        // Recursive case
+        for c:=0; c<=len(base_kmer); c++ {
+
+            // This will make a new copy of choices
+            // for each recursive function call
+            choices2 := append(choices,c)
+            err := visitHammingNeighbors_recursive(base_kmer, depth-1, choices2, results)
+            if err != nil {
+                return err
+            }
+        }
+
+    }
+
+    return nil
+}
+
+
+// Given a base kmer and a choice of indices where
+// the kmer should be changed, generate all possible
+// variations on this base_kmer.
+func visit( base_kmer string, choices []int, results chan<- string) {
+
+    // We have already made choices, 
+    // so we don't need to make new choices,
+    // we just need to pop them and apply 
+    // them to the base_kmer input string.
+    if len(choices) > 0 {
+
+        all_codons := []string{"A","T","G","C"}
+
+        // Pop the next choice
+        // https://github.com/golang/go/wiki/SliceTricks
+        ch_ix,choices := choices[0],choices[1:]
+
+        // Get the value of the codon at that location
+        // (need string here b/c otherwise this is a byte)
+        if ch_ix < len(base_kmer) {
+            // slice of string is bytes, 
+            // so convert back to string
+            this_codon := string(base_kmer[ch_ix])
+            for _,codon := range all_codons {
+
+                if codon != this_codon {
+                    // Swap out the old codon with the new codon
+                    new_kmer := base_kmer[0:ch_ix] + codon + base_kmer[ch_ix+1:]
+                    go visit(new_kmer, choices, results)
+                }
+            }
+        }
+
+    } else {
+        results<-base_kmer
+    }
+    //return nil
+}
