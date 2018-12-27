@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// TODO: add a test that loads from a file in data/
+
 func TestMatrixHammingDistance(t *testing.T) {
 	var tests = []struct {
 		p    string

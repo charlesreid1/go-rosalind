@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// TODO: add a test that loads from a file in data/
+
 func TestMatrixApproximateOccurrences(t *testing.T) {
 	var tests = []struct {
 		pattern string

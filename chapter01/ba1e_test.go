@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+// TODO: add a test that loads a file in data/
+
 func TestMatrixFindClumps(t *testing.T) {
 	var tests = []struct {
 		genome string

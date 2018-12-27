@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+// TODO: add a test loaded from a file in data/
+
 func TestMatrixMinSkewPosition(t *testing.T) {
 	var tests = []struct {
 		genome string
