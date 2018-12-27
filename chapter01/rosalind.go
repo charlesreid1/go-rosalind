@@ -673,10 +673,54 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 	return result, nil
 }
 
+// Given an input string of DNA of length n,
+// a maximum Hamming distance of d,
+// and a number of codons c, determine
+// the number of Hamming neighbors of
+// distance less than or equal to d
+// using a combinatorics formula.
+func CountHammingNeighbors(n, d, c int) (int, error) {
+
+	if n < 1 {
+		err := fmt.Sprintf("Error: parameter n (length of input string) must be > 0, you specified n = %d", n)
+		return -1, errors.New(err)
+	}
+
+	if d < 0 {
+		err := fmt.Sprintf("Error: parameter d (max Hamming depth) must be >= 0, you specified d = %d", d)
+		return -1, errors.New(err)
+	}
+
+	if c < 1 {
+		err := fmt.Sprintf("Error: parameter c (number of codons) must be positive, you specified c = %d", c)
+		return -1, errors.New(err)
+	}
+
+	// Use combinatorics to calculate number
+	// of variations
+	nv := 0
+	for dd := 0; dd <= d; dd++ {
+
+		// Binomial(n,d) => number of ways we can
+		//                  pick codons to edit
+		next_term := Binomial(n, dd)
+
+		// (c-1)^d => number of ways that the codons
+		//            we picked to edit can be edited
+		for j := 0; j < dd; j++ {
+			next_term *= (c - 1)
+		}
+		nv += next_term
+	}
+	return nv, nil
+}
+
 // Given an input string of DNA, generate variants
 // of said string that are a Hamming distance of
 // less than or equal to d.
-func VisitHammingNeighbors(input string, d int) ([]string, error) {
+func VisitHammingNeighbors(input string,
+	d int) ([]string, error) {
+
 	// a.k.a. visit_kmer_neighbors
 
 	// number of codons
