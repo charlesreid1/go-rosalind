@@ -192,14 +192,14 @@ func DNA2Bitmasks(input string) (map[string][]bool, error) {
 	// Convert input to uppercase
 	input = s.ToUpper(input)
 
-	// Allocate space for the map
-	m := make(map[string][]bool)
-
 	// Start by checking whether we have DNA
 	if CheckIsDNA(input) == false {
 		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return m, errors.New(err)
+		return nil, errors.New(err)
 	}
+
+	// Allocate space for the map
+	m := make(map[string][]bool)
 
 	// Important: we want to iterate over the
 	// DNA string ONCE and only once. That means
@@ -718,15 +718,7 @@ func VisitHammingNeighbors(input string,
 
 	// Use combinatorics to calculate the total
 	// number of variation.
-	buffsize := 0
-	for dd := 0; dd <= d; dd++ {
-		next_term := Binomial(len(input), dd)
-		// old fashioned Pow() function
-		for j := 0; j < dd; j++ {
-			next_term *= (n_codons - 1)
-		}
-		buffsize += next_term
-	}
+	buffsize, _ := CountHammingNeighbors(len(input), d, n_codons)
 
 	// This blows up quickly, so warn the user
 	// if their problem is too big
@@ -913,4 +905,104 @@ func MostFrequentKmersMismatchesRevComp(input string, k, d int) ([]string, error
 		}
 	}
 	return mfks, nil
+}
+
+////////////////////////////////
+// BA1k
+
+//// Generate and return the frequency array
+//// for an input string for all kmers of
+//// a given length k.
+//func FrequencyArray(input string, k int) ([]int, error) {
+//
+//}
+
+// PatternToNumber transforms a kmer of a
+// given length into a corresponding integer
+// indicating its lexicographic ordering
+// among all kmers of length k.
+//
+// A = 0
+// C = 1
+// G = 2
+// T = 3
+//
+// Example for k = 3:
+// C G T
+// | | |
+// | | T - - > 3 * 4^{k-3}
+// | G - - - > 2 * 4^{k-2}
+// C - - - - > 1 * 4^{k-1}
+//
+// This basically boils down to transforming
+// a number between base 10 (integer) and
+// base 4 (DNA)
+func PatternToNumber(input string) (int, error) {
+
+	// Start by checking whether we have DNA
+	if CheckIsDNA(input) == false {
+		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return -1, errors.New(err)
+	}
+
+	// Mapping from codons to integers
+	codons := make(map[string]int)
+	codons["A"] = 0
+	codons["C"] = 1
+	codons["G"] = 2
+	codons["T"] = 3
+
+	base := 4
+	result := 0
+	k := len(input)
+	for i := 0; i < k; i++ {
+		multiplier := codons[string(input[i])]
+		xpo := k - 1 - i
+		nextterm := multiplier
+		for j := 0; j < xpo; j++ {
+			nextterm *= base
+		}
+		result += nextterm
+	}
+	return result, nil
+
+}
+
+// NumberToPattern converts an integer n and
+// a kmer length k into the corresponding
+// kmer string.
+//
+// NOTE: We should be a little more careful about
+// integer overflow, as that can easily happen for
+// large k.
+func NumberToPattern(n, k int) (string, error) {
+
+	if n < 1 || k < 1 {
+		msg := fmt.Sprintf("Error: inputs must be positive nonzero numbers. You specified n = %d, k = %d",
+			n, k)
+		return "", errors.New(msg)
+	}
+
+	// Mapping from codons to integers
+	codons := []string{"A", "C", "G", "T"}
+
+	// k is number of slots to allocate
+	results_int := make([]int, k)
+	results_str := make([]string, k)
+	var a, b int // accumulator, base
+	var q, r int // quotient, remainder
+	a = n
+	b = 4
+	for d := 0; d < k; d++ {
+		// quotient is reassigned to accumulator,
+		// remainder is which codon
+		q = a / b
+		r = a % b
+		ix := k - d - 1
+		results_int[ix] = r
+		results_str[ix] = codons[r]
+		a = q
+	}
+
+	return s.Join(results_str, ""), nil
 }
