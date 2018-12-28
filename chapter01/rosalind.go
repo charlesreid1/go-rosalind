@@ -86,23 +86,22 @@ func KmerHistogram(input string, k int) (map[string]int, error) {
 // Find the most frequent kmer(s) in the kmer histogram,
 // and return as a string array slice
 func MostFrequentKmers(input string, k int) ([]string, error) {
-	max := 0
-
-	// most frequent kmers
-	mfks := []string{}
 
 	if k < 1 {
 		err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
-		return mfks, errors.New(err)
+		return nil, errors.New(err)
 	}
 
 	khist, err := KmerHistogram(input, k)
 
 	if err != nil {
 		err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
-		return mfks, errors.New(err)
+		return nil, errors.New(err)
 	}
 
+	// Collect final answer
+	mfks := []string{} // most frequent kmers
+	max := 0
 	for kmer, freq := range khist {
 		if freq > max {
 			// We have a new maximum, and a new set of kmers
@@ -542,23 +541,21 @@ func CountKmersMismatches(input string, k, d int) (int, error) {
 // of Hamming distance <= d.
 func MostFrequentKmersMismatches(input string, k, d int) ([]string, error) {
 
-	max := 0
-
-	// most frequent kmers
-	mfks := []string{}
-
 	if k < 1 {
 		err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
-		return mfks, errors.New(err)
+		return nil, errors.New(err)
 	}
 
 	khist, err := KmerHistogramMismatches(input, k, d)
 
 	if err != nil {
 		err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
-		return mfks, errors.New(err)
+		return nil, errors.New(err)
 	}
 
+	// Collect final answer
+	mfks := []string{} // most frequent kmers
+	max := 0
 	for kmer, freq := range khist {
 		if freq > max {
 			// We have a new maximum, and a new set of kmers
@@ -861,4 +858,59 @@ func visit(base_kmer string, choices []int, results map[string]bool) {
 		results[base_kmer] = true
 	}
 	//return nil
+}
+
+////////////////////////////////
+// BA1j
+
+// Find the most frequent kmer(s) of length k
+// in the given input string and its reverse
+// complement. Include mismatches of Hamming
+// distance <= d.
+func MostFrequentKmersMismatchesRevComp(input string, k, d int) ([]string, error) {
+
+	// Histogram for input string
+	khist1, err := KmerHistogramMismatches(input, k, d)
+	if err != nil {
+		err := "Error calling KmerHistogramMismatches on input string"
+		return nil, errors.New(err)
+	}
+
+	// Histogram for reverse complement
+	revcomp, err := ReverseComplement(input)
+	if err != nil {
+		err := "Error calling ReverseComplement() on input string"
+		return nil, errors.New(err)
+	}
+	khist2, err := KmerHistogramMismatches(revcomp, k, d)
+	if err != nil {
+		err := "Error calling KmerHistogramMismatches on input string"
+		return nil, errors.New(err)
+	}
+
+	// Interleave histograms
+	khist := make(map[string]int)
+
+	for k1 := range khist1 {
+		khist[k1] += khist1[k1]
+	}
+
+	for k2 := range khist2 {
+		khist[k2] += khist2[k2]
+	}
+
+	// Collect final answer
+	mfks := []string{} // most frequent kmers
+	max := 0
+	for kmer, freq := range khist {
+		if freq > max {
+			// We have a new maximum, and a new set of kmers
+			max = freq
+			mfks = []string{kmer}
+		} else if freq == max {
+			// We have another maximum
+			mfks = append(mfks, kmer)
+		}
+	}
+	return mfks, nil
 }
