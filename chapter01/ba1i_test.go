@@ -71,7 +71,7 @@ func TestMatrixVisitHammingNeighbors(t *testing.T) {
 	}
 }
 
-func TestMatrixMostFrequentKmersMismatch(t *testing.T) {
+func TestMatrixMostFrequentKmersMismatches(t *testing.T) {
 	var tests = []struct {
 		input string   // input string
 		k     int      // kmer size
@@ -126,21 +126,15 @@ func TestMatrixMostFrequentKmersMismatch(t *testing.T) {
 		sort.Strings(result)
 
 		if !EqualStringSlices(result, test.gold) {
-			m, _ := KmerHistogramMismatches(test.input, test.k, test.d)
-			z := ""
-			for i, j := range m {
-				z += fmt.Sprintf("\n%s : %d", i, j)
-			}
-			err := fmt.Sprintf("Error testing MostFrequentKmersMismatches():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n\nhistogram = %s",
+			err := fmt.Sprintf("Error testing MostFrequentKmersMismatches():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n",
 				test.input, test.k, test.d,
-				result, test.gold,
-				z)
+				result, test.gold)
 			t.Error(err)
 		}
 	}
 }
 
-func TestMostFrequentKmersMismatchFile(t *testing.T) {
+func TestMostFrequentKmersMismatchesFile(t *testing.T) {
 
 	filename := "data/frequent_words_mismatch.txt"
 
@@ -181,9 +175,9 @@ func TestMostFrequentKmersMismatchFile(t *testing.T) {
 
 	// Check that there _was_ a result
 	if len(result) == 0 {
-		err := fmt.Sprintf("Error testing MostFrequentKmersMismatch using test case from file: length of most frequent kmers found was 0: %q",
+		msg := fmt.Sprintf("Error testing MostFrequentKmersMismatches() using test case from file: length of most frequent kmers found was 0: %q",
 			result)
-		t.Error(err)
+		t.Error(msg)
 	}
 
 	// Sort before comparing
@@ -192,8 +186,8 @@ func TestMostFrequentKmersMismatchFile(t *testing.T) {
 
 	// These will only be unequal if something went wrong
 	if !EqualStringSlices(gold, result) {
-		err := fmt.Sprintf("Error testing MostFrequentKmersMismatch using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
+		msg := fmt.Sprintf("Error testing MostFrequentKmersMismatches() using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
 			result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
