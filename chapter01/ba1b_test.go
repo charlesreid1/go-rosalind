@@ -74,7 +74,7 @@ func TestMostFrequentKmersFile(t *testing.T) {
 
 	// These will only be unequal if something went wrong
 	if !EqualStringSlices(gold, result) {
-		err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers mismatch.\ncomputed = %q\ngold     = %q\n",
+		err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
 			result, gold)
 		t.Error(err)
 	}

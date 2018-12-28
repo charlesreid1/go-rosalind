@@ -620,12 +620,9 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 
 	hamm_neighbors := map[string][]string{}
 
-	// Iterate over each position
+	// Iterate over each window position in the input string
+	// and generate all Hamming neighbors of the given kmer
 	for i := 0; i < overlap; i++ {
-
-		// TODO goroutines 1:
-		// Spawn goroutines, and block
-		// until all return results
 
 		// Get the kmer of interest
 		kmer := input[i : i+k]
@@ -637,7 +634,7 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 			return nil, errors.New(err)
 		}
 
-		// Increment the count
+		// Store this kmer's neighbors for later
 		hamm_neighbors[kmer] = neighbors
 	}
 
@@ -652,10 +649,6 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 	// Iterate over each position
 	for i := 0; i < overlap; i++ {
 
-		// TODO goroutines 2:
-		// Spawn goroutines, and block
-		// until all return results
-
 		// Get the kmer of interest
 		kmer := input[i : i+k]
 
@@ -663,7 +656,7 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 		neighbors := hamm_neighbors[kmer]
 
 		// Increment count for kmer and neighbors
-		result[kmer] += 1
+		// (note that neighbors includes the kmer itself)
 		for _, neighbor := range neighbors {
 			result[neighbor] += 1
 		}
@@ -715,7 +708,7 @@ func CountHammingNeighbors(n, d, c int) (int, error) {
 	return nv, nil
 }
 
-// Given an input string of DNA, generate variants
+// Given an input string of DNA, generate variations
 // of said string that are a Hamming distance of
 // less than or equal to d.
 func VisitHammingNeighbors(input string,
@@ -726,31 +719,28 @@ func VisitHammingNeighbors(input string,
 	// number of codons
 	n_codons := 4
 
-	// Use combinatorics to calculate number
-	// of permutations
+	// Use combinatorics to calculate the total
+	// number of variation.
 	buffsize := 0
 	for dd := 0; dd <= d; dd++ {
-
 		next_term := Binomial(len(input), dd)
 		// old fashioned Pow() function
 		for j := 0; j < dd; j++ {
 			next_term *= (n_codons - 1)
 		}
 		buffsize += next_term
-
 	}
 
-	// We need to store all permutations,
-	// but the number of permutations will
-	// blow up fast, so cut off at some point
-	MAX := 100000
+	// This blows up quickly, so warn the user
+	// if their problem is too big
+	MAX := int(1e6)
 	if buffsize > MAX {
 		err := fmt.Sprintf("Error: you are generating over MAX = %d permutations, you probably don't want to do this.", d)
 		return nil, errors.New(err)
 	}
 
-	// Make a channel
-	results := make(chan string, buffsize+10)
+	// Store the final results in a set (string->bool map)
+	results := make(map[string]bool)
 
 	// Algorithm:
 	// ------------
@@ -771,29 +761,38 @@ func VisitHammingNeighbors(input string,
 		choices := []int{}
 
 		// Populate list of neighbors
+		//go visitHammingNeighbors_recursive(input, dd, choices, results)
 		visitHammingNeighbors_recursive(input, dd, choices, results)
 
 	}
 
-	// Add them to the resulting list of hamming neighbors
-	permutations := make([]string, buffsize)
-	for k := 0; k < buffsize; k++ {
-		permutations[k] = <-results
+	// Check if we have the right number of results
+	if len(results) != buffsize {
+		fmt.Printf("WARNING: number of results (%d) did not match expected value (%d)\n", len(results), buffsize)
 	}
 
-	return permutations, nil
+	// Add them to the resulting list of hamming neighbors
+	i := 0
+	variations := make([]string, len(results))
+	for result := range results {
+		variations[i] = result
+		i++
+	}
+
+	return variations, nil
 }
 
 // Recursive function: given an input string of DNA,
 // generate Hamming neighbors that are a Hamming
 // distance of exactly d. Populate the neighbors
 // array with the resulting neighbors.
-func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int, results chan<- string) error {
+func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int, results map[string]bool) error {
 
 	if depth == 0 {
 
 		// Base case
-		go visit(base_kmer, choices, results)
+		//go visit(base_kmer, choices, results)
+		visit(base_kmer, choices, results)
 		return nil
 
 	} else {
@@ -801,12 +800,22 @@ func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int,
 		// Recursive case
 		for c := 0; c <= len(base_kmer); c++ {
 
-			// This will make a new copy of choices
-			// for each recursive function call
-			choices2 := append(choices, c)
-			err := visitHammingNeighbors_recursive(base_kmer, depth-1, choices2, results)
-			if err != nil {
-				return err
+			var indexAlreadyTaken bool
+			for _, choice := range choices {
+				if c == choice {
+					indexAlreadyTaken = true
+				}
+			}
+			if !indexAlreadyTaken {
+
+				// This will make a new copy of choices
+				// for each recursive function call
+				choices2 := append(choices, c)
+				err := visitHammingNeighbors_recursive(base_kmer, depth-1, choices2, results)
+				if err != nil {
+					return err
+				}
+
 			}
 		}
 
@@ -818,7 +827,7 @@ func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int,
 // Given a base kmer and a choice of indices where
 // the kmer should be changed, generate all possible
 // variations on this base_kmer.
-func visit(base_kmer string, choices []int, results chan<- string) {
+func visit(base_kmer string, choices []int, results map[string]bool) {
 
 	// We have already made choices,
 	// so we don't need to make new choices,
@@ -843,13 +852,13 @@ func visit(base_kmer string, choices []int, results chan<- string) {
 				if codon != this_codon {
 					// Swap out the old codon with the new codon
 					new_kmer := base_kmer[0:ch_ix] + codon + base_kmer[ch_ix+1:]
-					go visit(new_kmer, choices, results)
+					visit(new_kmer, choices, results)
 				}
 			}
 		}
 
 	} else {
-		results <- base_kmer
+		results[base_kmer] = true
 	}
 	//return nil
 }
