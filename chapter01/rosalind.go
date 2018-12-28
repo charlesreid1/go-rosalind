@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"sort"
 	s "strings"
 )
@@ -910,12 +911,29 @@ func MostFrequentKmersMismatchesRevComp(input string, k, d int) ([]string, error
 ////////////////////////////////
 // BA1k
 
-//// Generate and return the frequency array
-//// for an input string for all kmers of
-//// a given length k.
-//func FrequencyArray(input string, k int) ([]int, error) {
+// Generate and return the frequency array
+// for an input string for all kmers of
+// a given length k.
 //
-//}
+// To do this, we assemble the kmer histogram
+// map, then convert that into the frequency
+// array.
+func FrequencyArray(input string, k int) ([]int, error) {
+
+	// Get kmer histogram
+	hist, _ := KmerHistogram(input, k)
+
+	size := int(math.Pow(4, float64(k)))
+
+	freq_arr := make([]int, size)
+
+	for kmer := range hist {
+		n, _ := PatternToNumber(kmer)
+		freq_arr[n] = hist[kmer]
+	}
+
+	return freq_arr, nil
+}
 
 // PatternToNumber transforms a kmer of a
 // given length into a corresponding integer
