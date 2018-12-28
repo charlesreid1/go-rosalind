@@ -10,5 +10,8 @@ func main() {
 	//BA1G("for_real/rosalind_ba1g.txt")
 	//BA1H("for_real/rosalind_ba1h.txt")
 	//BA1i("for_real/rosalind_ba1i.txt")
-	BA1j("for_real/rosalind_ba1j.txt")
+	//BA1j("for_real/rosalind_ba1j.txt")
+	//BA1K("for_real/rosalind_ba1k.txt")
+	//BA1L("for_real/rosalind_ba1l.txt")
+	BA1M("for_real/rosalind_ba1m.txt")
 }
