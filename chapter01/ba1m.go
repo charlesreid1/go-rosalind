@@ -4,23 +4,21 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	"strings"
 )
 
-// Rosalind: Problem BA1B: Most Frequent k-mers
+// Rosalind: Problem BA1M: Pattern to Number
 
 // Describe the problem
-func BA1BDescription() {
+func BA1MDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1B:",
-		"Most Frequest k-mers",
+		"Rosalind: Problem BA1M:",
+		"Number to Pattern",
 		"",
-		"Given an input string and a length k,",
-		"report the k-mer or k-mers that occur",
-		"most frequently.",
+		"Given an integer and a kmer length k, convert",
+		"the integer to its corresponding kmer.",
 		"",
-		"URL: http://rosalind.info/problems/ba1b/",
+		"URL: http://rosalind.info/problems/ba1m/",
 		"",
 	}
 	for _, line := range description {
@@ -29,9 +27,9 @@ func BA1BDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1B(filename string) {
+func BA1M(filename string) {
 
-	BA1BDescription()
+	BA1MDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -41,17 +39,22 @@ func BA1B(filename string) {
 	}
 
 	// Input file contents
-	input := lines[0]
+	number_str := lines[0]
 	k_str := lines[1]
+
+	number, err := strconv.Atoi(number_str)
+	if err != nil {
+		log.Fatalf("Error: string to int conversion for number: %v", err)
+	}
 
 	k, err := strconv.Atoi(k_str)
 	if err != nil {
-		log.Fatalf("Error: string to int conversion: %v", err)
+		log.Fatalf("Error: string to int conversion for k: %v", err)
 	}
 
-	mfks, _ := MostFrequentKmers(input, k)
+	result, _ := NumberToPattern(number, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(strings.Join(mfks, " "))
+	fmt.Println(result)
 }

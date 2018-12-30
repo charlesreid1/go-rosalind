@@ -4,23 +4,23 @@ import (
 	"fmt"
 	"log"
 	"strconv"
-	"strings"
 )
 
-// Rosalind: Problem BA1B: Most Frequent k-mers
+// Rosalind: Problem BA1K: Generate Frequency Array
 
 // Describe the problem
-func BA1BDescription() {
+func BA1KDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1B:",
-		"Most Frequest k-mers",
+		"Rosalind: Problem BA1K:",
+		"Generate Frequency Array",
 		"",
-		"Given an input string and a length k,",
-		"report the k-mer or k-mers that occur",
-		"most frequently.",
+		"Given an integer k, generate the frequency array of",
+		"an input string. The frequency array is an array of",
+		"counts with one count per index, and integers mapped",
+		"to kmers.",
 		"",
-		"URL: http://rosalind.info/problems/ba1b/",
+		"URL: http://rosalind.info/problems/ba1k/",
 		"",
 	}
 	for _, line := range description {
@@ -29,9 +29,9 @@ func BA1BDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1B(filename string) {
+func BA1K(filename string) {
 
-	BA1BDescription()
+	BA1KDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -46,12 +46,15 @@ func BA1B(filename string) {
 
 	k, err := strconv.Atoi(k_str)
 	if err != nil {
-		log.Fatalf("Error: string to int conversion: %v", err)
+		log.Fatalf("Error: string to int conversion for parameter k: %v", err)
 	}
 
-	mfks, _ := MostFrequentKmers(input, k)
+	arr, _ := FrequencyArray(input, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(strings.Join(mfks, " "))
+	for _, e := range arr {
+		fmt.Print(e, " ")
+	}
+	//fmt.Println(strings.Join(arr, " "))
 }
