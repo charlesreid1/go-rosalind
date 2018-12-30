@@ -52,5 +52,7 @@ func BA1N(filename string) {
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(result)
+	for _, j := range result {
+		fmt.Println(j)
+	}
 }
