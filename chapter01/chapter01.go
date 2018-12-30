@@ -13,5 +13,6 @@ func main() {
 	//BA1j("for_real/rosalind_ba1j.txt")
 	//BA1K("for_real/rosalind_ba1k.txt")
 	//BA1L("for_real/rosalind_ba1l.txt")
-	BA1M("for_real/rosalind_ba1m.txt")
+	//BA1M("for_real/rosalind_ba1m.txt")
+	BA1N("for_real/rosalind_ba1n.txt")
 }
