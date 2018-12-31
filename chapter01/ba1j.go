@@ -1,10 +1,12 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1j: Most Frequent Words with Mismatches and Reverse Complements
@@ -61,7 +63,7 @@ func BA1j(filename string) {
 		log.Fatalf("Error: string to int conversion for parameter d: %v", err)
 	}
 
-	mfks_mis, _ := MostFrequentKmersMismatchesRevComp(input, k, d)
+	mfks_mis, _ := rosa.MostFrequentKmersMismatchesRevComp(input, k, d)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

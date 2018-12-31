@@ -1,9 +1,11 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1N: Calculating d-Neighborhood of String
@@ -48,7 +50,7 @@ func BA1N(filename string) {
 		log.Fatalf("Error: string to int conversion for d: %v", err)
 	}
 
-	result, _ := VisitHammingNeighbors(input, d)
+	result, _ := rosa.VisitHammingNeighbors(input, d)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

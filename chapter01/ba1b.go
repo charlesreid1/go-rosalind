@@ -1,10 +1,12 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1B: Most Frequent k-mers
@@ -49,7 +51,7 @@ func BA1B(filename string) {
 		log.Fatalf("Error: string to int conversion: %v", err)
 	}
 
-	mfks, _ := MostFrequentKmers(input, k)
+	mfks, _ := rosa.MostFrequentKmers(input, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

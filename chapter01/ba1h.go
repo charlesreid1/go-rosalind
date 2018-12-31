@@ -1,10 +1,12 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1H: Find approximate occurrences of pattern in string
@@ -48,7 +50,7 @@ func BA1H(filename string) {
 
 	d, _ := strconv.Atoi(d_str)
 
-	approx, _ := FindApproximateOccurrences(pattern, text, d)
+	approx, _ := rosa.FindApproximateOccurrences(pattern, text, d)
 
 	approx_str := make([]string, len(approx))
 	for i, j := range approx {

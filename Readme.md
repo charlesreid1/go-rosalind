@@ -1,12 +1,21 @@
 # go-rosalind
 
-_A Go (golang) package for solving bioinformatics problems._
+`rosalind` is a Go (golang) package for solving bioinformatics problems.
+
+![](https://img.shields.io/travis/charlesreid1/go-rosalind.svg)
+![](https://img.shields.io/github/license/charlesreid1/go-rosalind.svg)
 
 ## Summary
 
-This repository contains a Go (golang) library called `rosalind`
-that provides a set of functions that are useful for solving
-bioinformatics problems from Rosalind.info.
+This repo contains a Go (golang) library, `rosalind`, that implements
+functionality for solving bioinformatics problems. This is mainly
+useful for problems on Rosalind.info but is for general use as well.
+
+Each set of questions (grouped by chapter) also has its own set of
+functions in a package called `rosalindchapterXX`.
+For example, Chapter 1 question A is implemented in package
+`rosalindchapter01` as the function `BA1A()`. This is mainly
+useful if you are answering questions on the Rosalind website.
 
 ## Quick Start
 

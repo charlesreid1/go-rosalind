@@ -1,8 +1,10 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1G: Find Hamming distance between two DNA strings
@@ -43,7 +45,7 @@ func BA1G(filename string) {
 	p := lines[0]
 	q := lines[1]
 
-	hamm, _ := HammingDistance(p, q)
+	hamm, _ := rosa.HammingDistance(p, q)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

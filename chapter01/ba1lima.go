@@ -1,8 +1,10 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1L: Pattern to Number
@@ -41,7 +43,7 @@ func BA1L(filename string) {
 	// Input file contents
 	input := lines[0]
 
-	number, _ := PatternToNumber(input)
+	number, _ := rosa.PatternToNumber(input)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

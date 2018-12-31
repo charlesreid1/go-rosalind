@@ -1,9 +1,11 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1K: Generate Frequency Array
@@ -49,7 +51,7 @@ func BA1K(filename string) {
 		log.Fatalf("Error: string to int conversion for parameter k: %v", err)
 	}
 
-	arr, _ := FrequencyArray(input, k)
+	arr, _ := rosa.FrequencyArray(input, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

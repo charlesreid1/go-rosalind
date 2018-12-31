@@ -1,10 +1,12 @@
-package main
+package rosalindchapter01
 
 import (
 	"fmt"
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1F: Find positions in a gene that minimizing skew
@@ -46,7 +48,7 @@ func BA1F(filename string) {
 	// Input file contents
 	genome := lines[0]
 
-	minskew, _ := MinSkewPositions(genome)
+	minskew, _ := rosa.MinSkewPositions(genome)
 
 	minskew_str := make([]string, len(minskew))
 	for i, j := range minskew {
