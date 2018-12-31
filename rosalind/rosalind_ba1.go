@@ -48,6 +48,11 @@ func PatternCount(input string, pattern string) int {
 func KmerHistogram(input string, k int) (map[string]int, error) {
 
 	if len(input) < 1 {
+		err := "Error: empty input"
+		return nil, errors.New(err)
+	}
+
+	if CheckIsDNA(input) == false {
 		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
 		return nil, errors.New(err)
 	}
