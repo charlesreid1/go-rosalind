@@ -22,12 +22,16 @@ Here is a brief example:
 ```
 package main
 
-import "github.com/charlesreid1/go-rosalind/rosalind"
+import (
+    "fmt"
+    "github.com/charlesreid1/go-rosalind/rosalind"
+)
 
 func main() {
 	input := "AAAATGCGCTAGTAAAAGTCACTGAAAA"
 	k := 4
-	result, err := rosalind.MostFrequentKmers(input, k)
+	result, _ := rosalind.MostFrequentKmers(input, k)
+    fmt.Println(result)
 }
 ```
 
