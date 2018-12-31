@@ -28,10 +28,10 @@ import (
 )
 
 func main() {
-	input := "AAAATGCGCTAGTAAAAGTCACTGAAAA"
-	k := 4
-	result, _ := rosalind.MostFrequentKmers(input, k)
-	fmt.Println(result)
+    input := "AAAATGCGCTAGTAAAAGTCACTGAAAA"
+    k := 4
+    result, _ := rosalind.MostFrequentKmers(input, k)
+    fmt.Println(result)
 }
 ```
 
