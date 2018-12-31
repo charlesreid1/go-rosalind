@@ -3,6 +3,7 @@ package rosalindchapter2
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
@@ -37,12 +38,17 @@ func BA2a(filename string) {
 		log.Fatalf("readLines: %v", err)
 	}
 
-	//// Input file contents
-	//input := lines[0]
-	//params := lines[1]
-	//result := rosa.PatternCount(input, pattern)
-	// 
-	//fmt.Println("")
-	//fmt.Printf("Computed result from input file: %s\n", filename)
-	//fmt.Println(result)
+	// Input file contents
+	params := lines[0]
+	dna := make([]string, len(lines)-1)
+	for ip1 := 1; ip1 < len(lines); ip1++ {
+		i := ip1 - 1
+		dna[i] = lines[ip1]
+	}
+
+	results := rosa.MotifEnumeration(input, dna)
+
+	fmt.Println("")
+	fmt.Printf("Computed result from input file: %s\n", filename)
+	fmt.Println(strings.Join(results, " "))
 }

@@ -14,20 +14,20 @@ def main():
             'description': 'Given a collection of strings of DNA, find all motifs (kmers of length k and Hamming distance d from all DNA strings).',
             'url': 'http://rosalind.info/problems/ba2a/'
         },
-        {
-            'chapter': '2',
-            'problem': 'b',
-            'title': 'Find a Median String',
-            'description': 'Given a set of DNA strings, find a k-mer pattern that minimizes the magnitude of the distance from it to the minimum Hamming distance (closest Hamming neighbor) kmer in each DNA string',
-            'url': 'http://rosalind.info/problems/ba2b/'
-        },
-        {
-            'chapter': '2',
-            'problem': 'c',
-            'title': 'Find a Profile-most Probable k-mer in a String',
-            'description': 'Given a profile matrix, find the most probable k-mer to generate the given DNA string.',
-            'url': 'http://rosalind.info/problems/ba2c/'
-        },
+        #{
+        #    'chapter': '2',
+        #    'problem': 'b',
+        #    'title': 'Find a Median String',
+        #    'description': 'Given a set of DNA strings, find a k-mer pattern that minimizes the magnitude of the distance from it to the minimum Hamming distance (closest Hamming neighbor) kmer in each DNA string',
+        #    'url': 'http://rosalind.info/problems/ba2b/'
+        #},
+        #{
+        #    'chapter': '2',
+        #    'problem': 'c',
+        #    'title': 'Find a Profile-most Probable k-mer in a String',
+        #    'description': 'Given a profile matrix, find the most probable k-mer to generate the given DNA string.',
+        #    'url': 'http://rosalind.info/problems/ba2c/'
+        #},
     ]
     
     print("Writing problem boilerplate code")
