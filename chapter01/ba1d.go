@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1D: Find all occurrences of pattern in string
@@ -45,7 +47,7 @@ func BA1D(filename string) {
 	genome := lines[1]
 
 	// Result is a slice of ints
-	locs, _ := FindOccurrences(pattern, genome)
+	locs, _ := rosa.FindOccurrences(pattern, genome)
 
 	// Convert to a slice of strings for easier printing
 	locs_str := make([]string, len(locs))

@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1E: Find patterns forming clumps in a string
@@ -49,7 +51,7 @@ func BA1E(filename string) {
 	L, _ := strconv.Atoi(params_slice[1])
 	t, _ := strconv.Atoi(params_slice[2])
 
-	patterns, _ := FindClumps(genome, k, L, t)
+	patterns, _ := rosa.FindClumps(genome, k, L, t)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

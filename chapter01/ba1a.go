@@ -3,6 +3,8 @@ package rosalindchapter01
 import (
 	"fmt"
 	"log"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1A: Most Frequent k-mers
@@ -45,7 +47,7 @@ func BA1A(filename string) {
 	input = lines[0]
 	pattern = lines[1]
 
-	result := PatternCount(input, pattern)
+	result := rosa.PatternCount(input, pattern)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

@@ -5,6 +5,8 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1i: Most Frequent Words with Mismatches
@@ -60,7 +62,7 @@ func BA1i(filename string) {
 		log.Fatalf("Error: string to int conversion for parameter d: %v", err)
 	}
 
-	mfks_mis, _ := MostFrequentKmersMismatches(input, k, d)
+	mfks_mis, _ := rosa.MostFrequentKmersMismatches(input, k, d)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

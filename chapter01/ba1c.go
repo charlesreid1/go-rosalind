@@ -3,6 +3,8 @@ package rosalindchapter01
 import (
 	"fmt"
 	"log"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1C: Find the Reverse Complement of a String
@@ -41,7 +43,7 @@ func BA1C(filename string) {
 	// Input file contents
 	input := lines[0]
 
-	result, _ := ReverseComplement(input)
+	result, _ := rosa.ReverseComplement(input)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

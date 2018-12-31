@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Rosalind: Problem BA1M: Pattern to Number
@@ -52,7 +54,7 @@ func BA1M(filename string) {
 		log.Fatalf("Error: string to int conversion for k: %v", err)
 	}
 
-	result, _ := NumberToPattern(number, k)
+	result, _ := rosa.NumberToPattern(number, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
