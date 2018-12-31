@@ -3,6 +3,7 @@
 `rosalind` is a Go (golang) package for solving bioinformatics problems.
 
 ![](https://img.shields.io/travis/charlesreid1/go-rosalind.svg)
+![](https://img.shields.io/badge/language-golang-00ADD8.svg)
 ![](https://img.shields.io/github/license/charlesreid1/go-rosalind.svg)
 
 ## Summary
