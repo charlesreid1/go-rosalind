@@ -1,9 +1,11 @@
+# https://docs.travis-ci.com/user/languages/go/
 language: go
-go_import_path: github.com/charlesreid1/go-rosalind/rosalind
 go: 
 - 1.10.x
 - 1.11.x
 - tip
+
+install: true
 
 script:
 - go test -v ./rosalind/...
