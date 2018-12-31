@@ -22,7 +22,7 @@ Here is a brief example:
 ```
 package main
 
-import "roslind"
+import "github.com/charlesreid1/go-rosalind/rosalind"
 
 func main() {
 	input := "AAAATGCGCTAGTAAAAGTCACTGAAAA"
