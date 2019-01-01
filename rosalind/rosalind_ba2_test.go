@@ -188,3 +188,67 @@ func TestFindMotifsFile(t *testing.T) {
 		t.Error(msg)
 	}
 }
+
+// Test the MinKmerDistance function.
+func TestMatrixMinKmerDistance(t *testing.T) {
+	var tests = []struct {
+		pattern string
+		text    string
+		d       int
+	}{
+		{"ATA", "AAATTGACGCAT", 1},
+		{"AAA", "AAAAAAAAAAA", 0},
+		{"AAA", "CCCCCCCCC", 3},
+		{"AAA", "GAAGAAGAAGAA", 1},
+		{"AAAA", "GAAG", 2},
+		{"AAAA", "GAAGAA", 1},
+	}
+	for _, test := range tests {
+
+		// Money shot
+		c, err := MinKmerDistance(test.pattern, test.text)
+		if err != nil {
+			t.Error(err)
+		}
+		if c != test.d {
+			msg := fmt.Sprintf("Error testing MinKmerDistance()\npattern = %s, text = %s\ncomputed = %d\ngold = %d",
+				test.pattern, test.text,
+				c, test.d)
+			t.Error(msg)
+		}
+
+	}
+}
+
+// Test the MinKmerDistances function.
+func TestMatrixMinKmerDistances(t *testing.T) {
+	var tests = []struct {
+		pattern string
+		inputs  []string
+		d       int
+	}{
+		{
+			"AAA",
+			[]string{"AAAA", "CCCC", "GGGG", "TTTT"},
+			9},
+		{
+			"AAA",
+			[]string{"GAAG", "CAAC", "TAAG", "TAAC"},
+			4},
+	}
+	for _, test := range tests {
+
+		// Money shot
+		c, err := MinKmerDistances(test.pattern, test.inputs)
+		if err != nil {
+			t.Error(err)
+		}
+		if c != test.d {
+			msg := fmt.Sprintf("Error testing MinKmerDistance()\npattern = %s, inputs = %v\ncomputed = %d\ngold = %d",
+				test.pattern, test.inputs,
+				c, test.d)
+			t.Error(msg)
+		}
+
+	}
+}

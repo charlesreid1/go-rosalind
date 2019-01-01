@@ -79,3 +79,74 @@ func KeySetIntersection(input []map[string]int) ([]string, error) {
 	}
 	return saves, nil
 }
+
+////////////////////////////////
+// BA2b
+
+// Given a k-mer pattern
+// and a longer string text,
+// find the minimum distance
+// from k-mer pattern to
+// any possible k-mer in text
+// as d(pattern,text).
+func MinKmerDistance(pattern, text string) (int, error) {
+
+	// Algorithm:
+	// Extract all possible kmers from text,
+	// compute distance from each to pattern,
+	// create a map with possible kmers -> distance
+
+	k := len(pattern)
+	overlap := len(text) - k + 1
+	min_dist := k // max possible value
+	for i := 0; i < overlap; i++ {
+		this_kmer := text[i : i+k]
+		dist, err := HammingDistance(this_kmer, pattern)
+		if err != nil {
+			msg := "Error: HammingDistance() returned error"
+			return -1, errors.New(msg)
+		}
+		if dist < min_dist {
+			min_dist = dist
+		}
+	}
+
+	return min_dist, nil
+}
+
+// Given a k-mer pattern
+// and a set of strings,
+// this function defines the
+func MinKmerDistances(pattern string, inputs []string) (int, error) {
+	s := 0
+	for _, text := range inputs {
+		d, err := MinKmerDistance(pattern, text)
+		s += d
+		if err != nil {
+			msg := fmt.Sprintf("Error: MinKmerDistance(%s,%s) returned error",
+				pattern, text)
+			return -1, errors.New(msg)
+		}
+	}
+	return s, nil
+}
+
+// k
+// Given a k-mer Pattern and a longer string Text, we use d(Pattern, Text) to denote the minimum Hamming distance between Pattern and any k-mer in Text,
+//
+//d(Pattern,Text)=minall k-mers Pattern' in TextHammingDistance(Pattern,Pattern′).
+//
+//Given a k-mer Pattern and a set of strings Dna = {Dna1, … , Dnat}, we define d(Pattern, Dna) as the sum of distances between Pattern and all strings in Dna,
+//
+//d(Pattern,Dna)=∑i=1td(Pattern,Dnai).
+//
+//Our goal is to find a k-mer Pattern that minimizes d(Pattern, Dna) over all k-mers Pattern, the same task that the Equivalent Motif Finding Problem is trying to achieve. We call such a k-mer a median string for Dna.
+//Median String Problem
+//
+//Find a median string.
+//
+//Given: An integer k and a collection of strings Dna.
+//
+//Return: A k-mer Pattern that minimizes d(Pattern, Dna) over all k-mers Pattern. (If multiple answers exist, you may return any one.)
+//
+//
