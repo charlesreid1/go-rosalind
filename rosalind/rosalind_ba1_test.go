@@ -792,6 +792,7 @@ func TestMatrixMostFrequentKmersMismatchesRevComp(t *testing.T) {
 	}
 }
 
+/*
 func TestMostFrequentKmersMismatchesRevCompFile(t *testing.T) {
 
 	filename := "data/frequent_words_mismatch_complements.txt"
@@ -849,6 +850,7 @@ func TestMostFrequentKmersMismatchesRevCompFile(t *testing.T) {
 		t.Error(msg)
 	}
 }
+*/
 
 /////////////////////////////////
 // BA1K Test
@@ -890,64 +892,6 @@ func TestMatrixFrequencyArray(t *testing.T) {
 		}
 	}
 }
-
-//func TestMostFrequentKmersMismatchesRevCompFile(t *testing.T) {
-//
-//	filename := "data/frequent_words_mismatch_complements.txt"
-//
-//	// Read the contents of the input file
-//	// into a single string
-//	lines, err := readLines(filename)
-//	if err != nil {
-//		log.Fatalf("readLines: %v", err)
-//	}
-//
-//	// lines[0]: Input
-//	dna := lines[1]
-//	params := strings.Split(lines[2], " ")
-//	if len(params) < 1 {
-//		log.Fatalf("Error splitting second line: only found 0-1 tokens")
-//	}
-//	// lines[3]: Output
-//	gold := strings.Split(lines[4], " ")
-//
-//	k_str, d_str := params[0], params[1]
-//
-//	k, err := strconv.Atoi(k_str)
-//	if err != nil {
-//		log.Fatalf("Error: string to int conversion for parameter k: %v", err)
-//	}
-//
-//	d, err := strconv.Atoi(d_str)
-//	if err != nil {
-//		log.Fatalf("Error: string to int conversion for parameter d: %v", err)
-//	}
-//
-//	result, err := MostFrequentKmersMismatchesRevComp(dna, k, d)
-//
-//	// Check if function threw error
-//	if err != nil {
-//		t.Error(err)
-//	}
-//
-//	// Check that there _was_ a result
-//	if len(result) == 0 {
-//		msg := fmt.Sprintf("Error testing MostFrequentKmersMismatchesRevComp() using test case from file: length of most frequent kmers found was 0: %q",
-//			result)
-//		t.Error(msg)
-//	}
-//
-//	// Sort before comparing
-//	sort.Strings(gold)
-//	sort.Strings(result)
-//
-//	// These will only be unequal if something went wrong
-//	if !EqualStringSlices(gold, result) {
-//		msg := fmt.Sprintf("Error testing MostFrequentKmersMismatchesRevComp() using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
-//			result, gold)
-//		t.Error(msg)
-//	}
-//}
 
 /////////////////////////////////
 // BA1Lima Test
