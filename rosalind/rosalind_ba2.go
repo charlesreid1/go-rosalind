@@ -87,36 +87,71 @@ func KeySetIntersection(input []map[string]int) ([]string, error) {
 // and a longer string text,
 // find the minimum distance
 // from k-mer pattern to
-// any possible k-mer in text
-// as d(pattern,text).
+// any possible k-mer in text.
 func MinKmerDistance(pattern, text string) (int, error) {
 
-	// Algorithm:
-	// Extract all possible kmers from text,
-	// compute distance from each to pattern,
-	// create a map with possible kmers -> distance
+	// Algorithm 1 (faster):
+	//
+	// Run a sliding window over the input string,
+	// and extract all k-mers of width window and
+	// add them to a window set.
+	//
+	// Once the set is assembled, compute the
+	// distance from k-mer pattern to k-mers
+	// in the window set, and add to distance map.
 
-	k := len(pattern)
-	overlap := len(text) - k + 1
-	min_dist := k // max possible value
-	for i := 0; i < overlap; i++ {
-		this_kmer := text[i : i+k]
-		dist, err := HammingDistance(this_kmer, pattern)
+	hist, err := KmerHistogram(text, len(pattern))
+	if err != nil {
+		msg := fmt.Sprintf("Error: KmerHistogram(%s,%d) returned error",
+			text, len(pattern))
+		return -1, errors.New(msg)
+	}
+
+	min_dist := len(pattern) // max possible value
+	for kmer := range hist {
+		d, err := HammingDistance(pattern, kmer)
 		if err != nil {
 			msg := "Error: HammingDistance() returned error"
 			return -1, errors.New(msg)
 		}
-		if dist < min_dist {
-			min_dist = dist
+		if d < min_dist {
+			min_dist = d
 		}
 	}
+
+	// // Algorithm 2 (slower):
+	// //
+	// // Run a sliding window over the input string,
+	// // and compute the distance between the k-mer
+	// // pattern and the k-mer in the window.
+	// //
+	// // This is slow if we have small k and large
+	// // input string length, or many duplicate
+	// // distance calculations (e.g., 1M ATGATGATG).
+	// k := len(pattern)
+	// overlap := len(text) - k + 1
+	// min_dist := k // max possible value
+	// for i := 0; i < overlap; i++ {
+	// 	this_kmer := text[i : i+k]
+	// 	dist, err := HammingDistance(this_kmer, pattern)
+	// 	if err != nil {
+	// 		msg := "Error: HammingDistance() returned error"
+	// 		return -1, errors.New(msg)
+	// 	}
+	// 	if dist < min_dist {
+	// 		min_dist = dist
+	// 	}
+	// }
 
 	return min_dist, nil
 }
 
 // Given a k-mer pattern
 // and a set of strings,
-// this function defines the
+// find the sum (L1 norm)
+// of the shortest distances
+// from k-mer pattern to
+// each input string.
 func MinKmerDistances(pattern string, inputs []string) (int, error) {
 	s := 0
 	for _, text := range inputs {
