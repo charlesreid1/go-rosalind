@@ -276,15 +276,15 @@ func TestReverseComplementFile(t *testing.T) {
 	result, err := ReverseComplement(input)
 
 	// Check that there _was_ a result
-	if len(result) == 0 {
-		err := fmt.Sprintf("Error testing ReverseComplement using test case from file")
-		t.Error(err)
+	if len(result) == 0 || err != nil {
+		msg := fmt.Sprintf("Error testing ReverseComplement using test case from file")
+		t.Error(msg)
 	}
 
 	if result != gold {
-		err := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
+		msg := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
 			input, result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
