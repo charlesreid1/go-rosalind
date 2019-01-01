@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-// readLines reads a whole file into memory
+// ReadLines reads a whole file into memory
 // and returns a slice of its lines.
-func readLines(path string) ([]string, error) {
+func ReadLines(path string) ([]string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -30,8 +30,8 @@ func readLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-// writeLines writes the lines to the given file.
-func writeLines(lines []string, path string) error {
+// WriteLines writes the lines to the given file.
+func WriteLines(lines []string, path string) error {
 	file, err := os.Create(path)
 	if err != nil {
 		return err

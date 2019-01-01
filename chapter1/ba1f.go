@@ -40,9 +40,9 @@ func BA1f(filename string) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

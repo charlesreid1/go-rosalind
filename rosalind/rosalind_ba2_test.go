@@ -134,13 +134,14 @@ func TestMatrixFindMotifs(t *testing.T) {
 // Test the FindMotifs function using a large
 // test case loaded from a file.
 func TestFindMotifsFile(t *testing.T) {
+
 	filename := "data/motif_enumeration.txt"
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// Input file contents

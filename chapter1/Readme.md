@@ -1,73 +1,69 @@
-# Chapter 1
+# Rosalind Chapter 1
 
-In this chapter we perform basic operations with 
-strings and data structures.
+This folder contains the `chapter1` module, which 
+provides functions for each of the problems from
+Chapter 1 of Rosalind.info's Bionformatics Textbook
+track.
 
 ## How to run
 
-* Each problem has its own function
+* Each problem has its own function (example: `BA1a(...)`)
 
-* To run the code for a particular problem,
-  call the function for that problem in `main.go`
+* Each problem expects an input file
+  (example input files in `for_real` directory,
+  or provide the input file downloaded
+  from Rosalind.info)
 
-* Edit `main.go` to call the right function,
-  and pass in the name of the input file you 
-  want to use: for example, `BA1A("input.txt")`
-  
-* The function you call is implemented in the
-  corresponding Go file (for example, `ba1a.go`).
-  It loads the inputs from the input file,
-  calls the right function with the inputs,
-  and prints the results.
+* Pass the input file name to the function, like this:
+  `BA1a("rosalind_ba1a.txt")`
 
-* The functions that load data from input files
-  are tested along with the functions themselves,
-  since each problem has a sample input file 
-  in `data/`
+## Quick Start
 
-## Directory Layout
+To use the functions in this package, start by installing it:
 
-* Each problem has one Go file and one test
+```
+go get github.com/charlesreid1/go-rosalind/chapter1
+```
 
-* The `data/` directory contains input files
-  for the tests (i.e., files that contain both
-  inputs and corresponding outputs)
+Once you have installed the `chapter1` package,
+you can import it, then call the function for whichever 
+Rosalind.info problem you want to solve from Chapter 1:
 
-* The `for_real/` directory contains sample 
-  input files from Rosalind.info for each
-  problem (i.e., files that contain only the
-  inputs)
+```
+package main
 
-* The `main.go` file contains the `main()` 
-  driver function and is the entrypoint for
-  `go run`
+import (
+    rch1 "github.com/charlesreid1/go-rosalind/chapter1"
+)
 
-* The `rosalind.go` file contains most of the
-  computational functionality implemented
-  for the problems.
+func main() {
+    rch1.BA1a("rosalind_ba1a.txt")
+}
+```
 
-* The `utils.go` file contains utilties unrelated
-  to bioinformatics.
+## Examples
 
-## Compiling and Running
+See `chapter1_test.go` for examples.
 
-To run all tests, `go test`:
+## Tests
+
+To run tests of all Chapter 1 problems, run
+`go test` from this directory:
 
 ```
 go test -v
 ```
 
-To run a specific problem, edit `main.go`
-to call the corresponding problem's function
-and then `go run`:
+or, from the parent directory, the root of the
+go-rosalind repository:
 
 ```
-go run main.go utils.go rosalind.go <name of ba1 file.go> 
+go test -v ./chapter1/...
 ```
 
-## To Do
-
-Add a Snakefile
-
-
+Note that this solves every problem in
+Chapter 1 and prints the solutions (so there
+is a lot of spew). It does not check the 
+solutions (for that, see the tests in the
+`rosalind` library.)
 

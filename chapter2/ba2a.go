@@ -34,22 +34,32 @@ func BA2a(filename string) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// Input file contents
-	params := lines[0]
+	params := strings.Split(lines[0], " ")
+	k, _ := strconv.Atoi(params[0])
+	d, _ := strconv.Atoi(params[1])
+
+	// 1 line in the input file is for
+	// parameters/gold standard.
+	// The rest of the lines are DNA strings.
+
+	// Make space for DNA strings
 	dna := make([]string, len(lines)-1)
-	for ip1 := 1; ip1 < len(lines); ip1++ {
-		i := ip1 - 1
-		dna[i] = lines[ip1]
+	iLstart := 1
+	iLend := len(lines)
+	// Two counters:
+	// one for the line index (iL),
+	// one for the array index (iA).
+	for iA, iL := 0, iLstart; iL < iLend; iA, iL = iA+1, iL+1 {
+		dna[iA] = lines[iL]
 	}
 
-	k, d := strconv.Atoi(params[0]), strconv.Atoi(params[1])
-
-	results := rosa.FindMotifs(dna, k, d)
+	results, _ := rosa.FindMotifs(dna, k, d)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

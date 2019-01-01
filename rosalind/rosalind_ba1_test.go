@@ -69,9 +69,9 @@ func TestPatternCountFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -127,9 +127,9 @@ func TestMostFrequentKmersFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -262,7 +262,7 @@ func TestReverseComplementFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
 		t.Error(err)
 	}
@@ -344,9 +344,9 @@ func TestFindOccurrencesFiles(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -702,9 +702,9 @@ func TestMostFrequentKmersMismatchesFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -799,9 +799,9 @@ func TestMostFrequentKmersMismatchesRevCompFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -921,9 +921,9 @@ func TestPatternToNumberFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -980,9 +980,9 @@ func TestNumberToPatternFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
@@ -1049,9 +1049,9 @@ func TestVisitNeighborhoodFile(t *testing.T) {
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("ReadLines: %v", err)
 	}
 
 	// lines[0]: Input
