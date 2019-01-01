@@ -48,13 +48,13 @@ func PatternCount(input string, pattern string) int {
 func KmerHistogram(input string, k int) (map[string]int, error) {
 
 	if len(input) < 1 {
-		err := "Error: empty input"
-		return nil, errors.New(err)
+		msg := "Error: empty input"
+		return nil, errors.New(msg)
 	}
 
 	if CheckIsDNA(input) == false {
-		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return nil, errors.New(msg)
 	}
 
 	result := map[string]int{}
@@ -87,15 +87,15 @@ func KmerHistogram(input string, k int) (map[string]int, error) {
 func MostFrequentKmers(input string, k int) ([]string, error) {
 
 	if k < 1 {
-		err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
+		return nil, errors.New(msg)
 	}
 
 	khist, err := KmerHistogram(input, k)
 
 	if err != nil {
-		err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
+		return nil, errors.New(msg)
 	}
 
 	// Collect final answer
@@ -123,15 +123,15 @@ func MoreFrequentThanNKmers(input string, k, N int) ([]string, error) {
 	mftnks := []string{}
 
 	if k < 1 || N < 1 {
-		err := fmt.Sprintf("Error: MoreFrequentThanNKmers received a kmer or frequency size that was not a natural number: k = %d, N = %d", k, N)
-		return mftnks, errors.New(err)
+		msg := fmt.Sprintf("Error: MoreFrequentThanNKmers received a kmer or frequency size that was not a natural number: k = %d, N = %d", k, N)
+		return mftnks, errors.New(msg)
 	}
 
 	khist, err := KmerHistogram(input, k)
 
 	if err != nil {
-		err := fmt.Sprintf("Error: MoreFrequentThanNKmers failed when calling KmerHistogram()")
-		return mftnks, errors.New(err)
+		msg := fmt.Sprintf("Error: MoreFrequentThanNKmers failed when calling KmerHistogram()")
+		return mftnks, errors.New(msg)
 	}
 
 	for kmer, freq := range khist {
@@ -193,8 +193,8 @@ func DNA2Bitmasks(input string) (map[string][]bool, error) {
 
 	// Start by checking whether we have DNA
 	if CheckIsDNA(input) == false {
-		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return nil, errors.New(msg)
 	}
 
 	// Allocate space for the map
@@ -234,8 +234,8 @@ func Bitmasks2DNA(bitmasks map[string][]bool) (string, error) {
 	_, Gok := bitmasks["G"]
 	_, Cok := bitmasks["C"]
 	if !(Aok && Tok && Gok && Cok) {
-		err := fmt.Sprintf("Error: input bitmask was missing one of: ATGC (Keys present? A: %t, T: %t, G: %t, C: %t", Aok, Tok, Gok, Cok)
-		return "", errors.New(err)
+		msg := fmt.Sprintf("Error: input bitmask was missing one of: ATGC (Keys present? A: %t, T: %t, G: %t, C: %t", Aok, Tok, Gok, Cok)
+		return "", errors.New(msg)
 	}
 
 	// Hope that all bitmasks are the same size
@@ -272,7 +272,8 @@ func Complement(input string) (string, error) {
 
 	// Start by checking whether we have DNA
 	if CheckIsDNA(input) == false {
-		return "", errors.New(fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input))
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return "", errors.New(msg)
 	}
 
 	m, _ := DNA2Bitmasks(input)
@@ -305,8 +306,8 @@ func ReverseComplement(input string) (string, error) {
 
 	// Start by checking whether we have DNA
 	if CheckIsDNA(input) == false {
-		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return "", errors.New(err)
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return "", errors.New(msg)
 	}
 
 	comp, _ := Complement(input)
@@ -466,8 +467,8 @@ func HammingDistance(p, q string) (int, error) {
 	// one string is empty would be 0, but
 	// we will throw an error instead.
 	if len(p) == 0 || len(q) == 0 {
-		err := fmt.Sprintf("Error: HammingDistance: one or more arguments had length 0. len(p) = %d, len(q) = %d", len(p), len(q))
-		return -1, errors.New(err)
+		msg := fmt.Sprintf("Error: HammingDistance: one or more arguments had length 0. len(p) = %d, len(q) = %d", len(p), len(q))
+		return -1, errors.New(msg)
 	}
 
 	// Get longest length common to both
@@ -541,15 +542,15 @@ func CountKmersMismatches(input string, k, d int) (int, error) {
 func MostFrequentKmersMismatches(input string, k, d int) ([]string, error) {
 
 	if k < 1 {
-		err := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: MostFrequentKmers received a kmer size that was not a natural number: k = %d", k)
+		return nil, errors.New(msg)
 	}
 
 	khist, err := KmerHistogramMismatches(input, k, d)
 
 	if err != nil {
-		err := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: MostFrequentKmers failed when calling KmerHistogram()")
+		return nil, errors.New(msg)
 	}
 
 	// Collect final answer
@@ -575,8 +576,8 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 
 	// Make sure our input string is well-formed
 	if !CheckIsDNA(input) {
-		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return nil, errors.New(msg)
 	}
 
 	// Number of substring overlaps
@@ -585,8 +586,8 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 	// If overlap < 1, we are looking
 	// for kmers longer than our input
 	if overlap < 1 {
-		err := fmt.Sprintf("Error: looking for kmer longer than input string (len(kmer) = %d, len(input) = %d).", k, len(input))
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: looking for kmer longer than input string (len(kmer) = %d, len(input) = %d).", k, len(input))
+		return nil, errors.New(msg)
 	}
 
 	// Algorithm:
@@ -626,8 +627,8 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 		// Find Hamming neighbors
 		neighbors, err := VisitHammingNeighbors(kmer, d)
 		if err != nil {
-			err := fmt.Sprintf("Error: failed to visit Hamming neighbors for kmer %s (d = %d)", kmer, d)
-			return nil, errors.New(err)
+			msg := fmt.Sprintf("Error: failed to visit Hamming neighbors for kmer %s (d = %d)", kmer, d)
+			return nil, errors.New(msg)
 		}
 
 		// Store this kmer's neighbors for later
@@ -671,18 +672,18 @@ func KmerHistogramMismatches(input string, k, d int) (map[string]int, error) {
 func CountHammingNeighbors(n, d, c int) (int, error) {
 
 	if n < 1 {
-		err := fmt.Sprintf("Error: parameter n (length of input string) must be > 0, you specified n = %d", n)
-		return -1, errors.New(err)
+		msg := fmt.Sprintf("Error: parameter n (length of input string) must be > 0, you specified n = %d", n)
+		return -1, errors.New(msg)
 	}
 
 	if d < 0 {
-		err := fmt.Sprintf("Error: parameter d (max Hamming depth) must be >= 0, you specified d = %d", d)
-		return -1, errors.New(err)
+		msg := fmt.Sprintf("Error: parameter d (max Hamming depth) must be >= 0, you specified d = %d", d)
+		return -1, errors.New(msg)
 	}
 
 	if c < 1 {
-		err := fmt.Sprintf("Error: parameter c (number of codons) must be positive, you specified c = %d", c)
-		return -1, errors.New(err)
+		msg := fmt.Sprintf("Error: parameter c (number of codons) must be positive, you specified c = %d", c)
+		return -1, errors.New(msg)
 	}
 
 	// Use combinatorics to calculate number
@@ -723,8 +724,8 @@ func VisitHammingNeighbors(input string,
 	// if their problem is too big
 	MAX := int(1e6)
 	if buffsize > MAX {
-		err := fmt.Sprintf("Error: you are generating over MAX = %d permutations, you probably don't want to do this.", d)
-		return nil, errors.New(err)
+		msg := fmt.Sprintf("Error: you are generating over MAX = %d permutations, you probably don't want to do this.", d)
+		return nil, errors.New(msg)
 	}
 
 	// Store the final results in a set (string->bool map)
@@ -863,20 +864,20 @@ func MostFrequentKmersMismatchesRevComp(input string, k, d int) ([]string, error
 	// Histogram for input string
 	khist1, err := KmerHistogramMismatches(input, k, d)
 	if err != nil {
-		err := "Error calling KmerHistogramMismatches on input string"
-		return nil, errors.New(err)
+		msg := "Error calling KmerHistogramMismatches on input string"
+		return nil, errors.New(msg)
 	}
 
 	// Histogram for reverse complement
 	revcomp, err := ReverseComplement(input)
 	if err != nil {
-		err := "Error calling ReverseComplement() on input string"
-		return nil, errors.New(err)
+		msg := "Error calling ReverseComplement() on input string"
+		return nil, errors.New(msg)
 	}
 	khist2, err := KmerHistogramMismatches(revcomp, k, d)
 	if err != nil {
-		err := "Error calling KmerHistogramMismatches on input string"
-		return nil, errors.New(err)
+		msg := "Error calling KmerHistogramMismatches on input string"
+		return nil, errors.New(msg)
 	}
 
 	// Interleave histograms
@@ -957,8 +958,8 @@ func PatternToNumber(input string) (int, error) {
 
 	// Start by checking whether we have DNA
 	if CheckIsDNA(input) == false {
-		err := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
-		return -1, errors.New(err)
+		msg := fmt.Sprintf("Error: input string was not DNA. Only characters ATCG are allowed, you had %s", input)
+		return -1, errors.New(msg)
 	}
 
 	// Mapping from codons to integers
