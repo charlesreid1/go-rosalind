@@ -16,7 +16,7 @@ are used to solve Rosalind problems.
 */
 
 ////////////////////////////////
-// BA1A
+// BA1a
 
 // Count occurrences of a substring pattern
 // in a string input
@@ -48,7 +48,7 @@ func PatternCount(input string, pattern string) int {
 }
 
 ////////////////////////////////
-// BA1B
+// BA1b
 
 // Return the histogram of kmers of length k
 // found in the given input
@@ -146,7 +146,7 @@ func MoreFrequentThanNKmers(input string, k, N int) ([]string, error) {
 }
 
 ////////////////////////////////
-// BA1C
+// BA1c
 
 // Reverse returns its argument string reversed
 // rune-wise left to right.
@@ -319,7 +319,7 @@ func ReverseComplement(input string) (string, error) {
 }
 
 ////////////////////////////////
-// BA1D
+// BA1d
 
 // Given a large string (genome) and a string (pattern),
 // find the zero-based indices where pattern occurs in genome.
@@ -346,7 +346,7 @@ func FindOccurrences(pattern, genome string) ([]int, error) {
 }
 
 ////////////////////////////////
-// BA1E
+// BA1e
 
 // Find k-mers (patterns) of length k occuring at least
 // t times over an interval of length L in a genome.
@@ -396,7 +396,7 @@ func FindClumps(genome string, k, L, t int) ([]string, error) {
 }
 
 ////////////////////////////////
-// BA1F
+// BA1f
 
 // The skew of a genome is the difference between
 // the number of G and C codons that have occurred
@@ -456,7 +456,7 @@ func MinSkewPositions(genome string) ([]int, error) {
 }
 
 ////////////////////////////////
-// BA1G
+// BA1g
 
 // Compute the Hamming distance between
 // two strings. The Hamming distance is
@@ -491,7 +491,7 @@ func HammingDistance(p, q string) (int, error) {
 }
 
 ////////////////////////////////
-// BA1H
+// BA1h
 
 // Given a large string (text) and a string (pattern),
 // find the zero-based indices where we have an occurrence

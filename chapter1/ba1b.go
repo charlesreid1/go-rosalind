@@ -9,13 +9,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1B: Most Frequent k-mers
+// Rosalind: Problem BA1b: Most Frequent k-mers
 
 // Describe the problem
-func BA1BDescription() {
+func BA1bDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1B:",
+		"Rosalind: Problem BA1b:",
 		"Most Frequest k-mers",
 		"",
 		"Given an input string and a length k,",
@@ -31,9 +31,9 @@ func BA1BDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1B(filename string) {
+func BA1b(filename string) {
 
-	BA1BDescription()
+	BA1bDescription()
 
 	// Read the contents of the input file
 	// into a single string

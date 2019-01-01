@@ -7,13 +7,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1C: Find the Reverse Complement of a String
+// Rosalind: Problem BA1c: Find the Reverse Complement of a String
 
 // Describe the problem
-func BA1CDescription() {
+func BA1cDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1C:",
+		"Rosalind: Problem BA1c:",
 		"Find the Reverse Complement of a String",
 		"",
 		"Given a DNA input string,",
@@ -29,9 +29,9 @@ func BA1CDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1C(filename string) {
+func BA1c(filename string) {
 
-	BA1CDescription()
+	BA1cDescription()
 
 	// Read the contents of the input file
 	// into a single string

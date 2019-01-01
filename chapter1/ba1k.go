@@ -8,13 +8,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1K: Generate Frequency Array
+// Rosalind: Problem BA1k: Generate Frequency Array
 
 // Describe the problem
-func BA1KDescription() {
+func BA1kDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1K:",
+		"Rosalind: Problem BA1k:",
 		"Generate Frequency Array",
 		"",
 		"Given an integer k, generate the frequency array of",
@@ -31,9 +31,9 @@ func BA1KDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1K(filename string) {
+func BA1k(filename string) {
 
-	BA1KDescription()
+	BA1kDescription()
 
 	// Read the contents of the input file
 	// into a single string
