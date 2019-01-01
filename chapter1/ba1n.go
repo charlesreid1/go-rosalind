@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -8,13 +8,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1N: Calculating d-Neighborhood of String
+// Rosalind: Problem BA1n: Calculating d-Neighborhood of String
 
 // Describe the problem
-func BA1NDescription() {
+func BA1nDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1N:",
+		"Rosalind: Problem BA1n:",
 		"Calculating d-Neighborhood of String",
 		"",
 		"Given an input string of DNA and a Hamming",
@@ -30,15 +30,15 @@ func BA1NDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1N(filename string) {
+func BA1n(filename string) {
 
-	BA1NDescription()
+	BA1nDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

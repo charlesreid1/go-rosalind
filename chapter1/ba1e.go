@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1E: Find patterns forming clumps in a string
+// Rosalind: Problem BA1e: Find patterns forming clumps in a string
 
 // Describe the problem
-func BA1EDescription() {
+func BA1eDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1E:",
+		"Rosalind: Problem BA1e:",
 		"Find patterns forming clumps in a string",
 		"",
 		"A clump is characterized by integers L and t",
@@ -31,15 +31,15 @@ func BA1EDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1E(filename string) {
+func BA1e(filename string) {
 
-	BA1EDescription()
+	BA1eDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

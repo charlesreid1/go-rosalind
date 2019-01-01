@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1H: Find approximate occurrences of pattern in string
+// Rosalind: Problem BA1h: Find approximate occurrences of pattern in string
 
 // Describe the problem
-func BA1HDescription() {
+func BA1hDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1H:",
+		"Rosalind: Problem BA1h:",
 		"Find approximate occurrences of pattern in string",
 		"",
 		"Given a string Text and a string Pattern, and a maximum",
@@ -32,15 +32,15 @@ func BA1HDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1H(filename string) {
+func BA1h(filename string) {
 
-	BA1HDescription()
+	BA1hDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

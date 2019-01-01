@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -8,13 +8,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1M: Pattern to Number
+// Rosalind: Problem BA1m: Pattern to Number
 
 // Describe the problem
-func BA1MDescription() {
+func BA1mDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1M:",
+		"Rosalind: Problem BA1m:",
 		"Number to Pattern",
 		"",
 		"Given an integer and a kmer length k, convert",
@@ -29,15 +29,15 @@ func BA1MDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1M(filename string) {
+func BA1m(filename string) {
 
-	BA1MDescription()
+	BA1mDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

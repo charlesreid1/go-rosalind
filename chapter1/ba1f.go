@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -9,13 +9,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1F: Find positions in a gene that minimizing skew
+// Rosalind: Problem BA1f: Find positions in a gene that minimizing skew
 
 // Describe the problem
-func BA1FDescription() {
+func BA1fDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1F:",
+		"Rosalind: Problem BA1f:",
 		"Find positions in a gene that minimize skew",
 		"",
 		"The skew of a genome is defined as the difference",
@@ -34,15 +34,15 @@ func BA1FDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1F(filename string) {
+func BA1f(filename string) {
 
-	BA1FDescription()
+	BA1fDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("Error: readLines: %v", err)
+		log.Fatalf("Error: rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents

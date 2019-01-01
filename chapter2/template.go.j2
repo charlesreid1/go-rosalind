@@ -1,0 +1,49 @@
+package rosalindchapter{{chapter}}
+
+import (
+	"fmt"
+	"log"
+
+	rosa "github.com/charlesreid1/go-rosalind/rosalind"
+)
+
+// Print problem description for Rosalind.info
+// Problem BA{{chapter}}{{problem}}: {{title}}
+func BA{{chapter}}{{problem}}Description() {
+	description := []string{
+		"-----------------------------------------",
+		"Rosalind: Problem BA{{chapter}}{{problem}}:",
+		"{{title}}",
+		"",
+		"{{description}}",
+		"",
+		"URL: {{url}}",
+		"",
+	}
+	for _, line := range description {
+		fmt.Println(line)
+	}
+}
+
+// Run the problem
+func BA{{chapter}}{{problem}}(filename string) {
+
+	BA{{chapter}}{{problem}}Description()
+
+	// Read the contents of the input file
+	// into a single string
+	lines, err := readLines(filename)
+	if err != nil {
+		log.Fatalf("readLines: %v", err)
+	}
+
+	//// Input file contents
+	//input := lines[0]
+	//params := lines[1]
+	//result := rosa.PatternCount(input, pattern)
+	// 
+	//fmt.Println("")
+	//fmt.Printf("Computed result from input file: %s\n", filename)
+	//fmt.Println(result)
+}
+

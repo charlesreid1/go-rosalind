@@ -12,15 +12,20 @@ This repo contains a Go (golang) library, `rosalind`, that implements
 functionality for solving bioinformatics problems. This is mainly
 useful for problems on Rosalind.info but is for general use as well.
 
-Each set of questions (grouped by chapter) also has its own set of
-functions in a package called `rosalindchapterXX`.
+Rosalind problems are grouped by chapter. Each problem has its own 
+function and is implemented in a library called `chapter1`, `chapter2`,
+etc.
+
 For example, Chapter 1 question A is implemented in package
-`rosalindchapter01` as the function `BA1A()`. This is mainly
-useful if you are answering questions on the Rosalind website.
+`chapter1` as the function `BA1a( <input-file-name> )`. 
+This (specific) functionality wraps the (general purpose)
+`rosalind` library.
 
 ## Quick Start
 
-This library can be installed using `go get`:
+### Rosalind
+
+The `rosalind` library can be installed using `go get`:
 
 ```
 go get https://github.com/charlesreid1/go-rosalind/rosalind
@@ -45,6 +50,40 @@ func main() {
 }
 ```
 
+### Problem Sets
+
+Each set of problems is grouped into its own package. These
+packages import the `rosalind` package, so it should be
+available.
+
+You can install the Chapter 1 problem set, for example, like so:
+
+```
+go get https://github.com/charlesreid1/go-rosalind/chapter1
+```
+
+This can now be imported and used in any Go program. Try creating
+a new Go program in a temporary directory and running it with
+`go run`:
+
+```
+package main
+
+import (
+    rch1 "github.com/charlesreid1/go-rosalind/chapter1"
+)
+
+func main() {
+    filename := "rosalind_ba1a.txt"
+    rch1.BA1a(filename)
+}
+```
+
+Assuming an input file `rosalind_ba1a.txt` is available,
+you should see a problem description and the output of
+the problem, which can be copied and pasted into
+Rosalind.info.
+
 ## Command Line Interface
 
 TBA
@@ -53,11 +92,11 @@ TBA
 
 The repo contains the following directories:
 
-* `chapter01/` - initial working directory; standalone code
+* `rosalind/` - code and functions for the Rosalind library
 
-* `chapter02/` - first set of solutions utilizing `rosalind` library
+* `chapter1/` - solutions to chapter 1 questions (utilizes `rosalind` library)
 
-* `rosalind/` - contains Rosalind library
+* `chapter2/` - solutions to chapter 2 questions
 
 See the Readme file in each respective directory for more info.
 

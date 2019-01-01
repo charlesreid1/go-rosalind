@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -7,13 +7,13 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1A: Most Frequent k-mers
+// Rosalind: Problem BA1a: Most Frequent k-mers
 
 // Describe the problem
-func BA1ADescription() {
+func BA1aDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1A:",
+		"Rosalind: Problem BA1a:",
 		"Most Frequest k-mers",
 		"",
 		"Given an input string and a length k,",
@@ -31,15 +31,15 @@ func BA1ADescription() {
 // Describe the problem,
 // print the name of the input file,
 // print the output/result
-func BA1A(filename string) {
+func BA1a(filename string) {
 
-	BA1ADescription()
+	BA1aDescription()
 
 	// Read the contents of the input file
 	// into a single string
-	lines, err := readLines(filename)
+	lines, err := rosa.ReadLines(filename)
 	if err != nil {
-		log.Fatalf("readLines: %v", err)
+		log.Fatalf("rosa.ReadLines: %v", err)
 	}
 
 	// Input file contents
