@@ -90,6 +90,7 @@ func EqualIntSlices(a, b []int) bool {
 	return true
 }
 
+/*
 // Compute the factorial of an integer.
 func Factorial(n int) int {
 	if n < 2 {
@@ -122,3 +123,4 @@ func Binomial(n, k int) int {
 
 	return result
 }
+*/
