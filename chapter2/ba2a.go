@@ -3,6 +3,7 @@ package rosalindchapter2
 import (
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
@@ -46,7 +47,9 @@ func BA2a(filename string) {
 		dna[i] = lines[ip1]
 	}
 
-	results := rosa.MotifEnumeration(input, dna)
+	k, d := strconv.Atoi(params[0]), strconv.Atoi(params[1])
+
+	results := rosa.FindMotifs(dna, k, d)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

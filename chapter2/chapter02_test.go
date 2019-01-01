@@ -1,4 +1,4 @@
-package rosalindchapter02
+package rosalindchapter2
 
 import "testing"
 
