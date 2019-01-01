@@ -52,6 +52,7 @@ func TestKeySetIntersection(t *testing.T) {
 	}
 }
 
+// Test the FindMotifs function using a single problem.
 func TestFindMotifs(t *testing.T) {
 	k := 3
 	d := 1
@@ -74,6 +75,64 @@ func TestFindMotifs(t *testing.T) {
 	}
 }
 
+// Test the FindMotifs function using a test matrix
+// of debug cases.
+func TestMatrixFindMotifs(t *testing.T) {
+	var tests = []struct {
+		k    int
+		d    int
+		dna  []string
+		gold []string
+	}{
+		{3, 1,
+			[]string{"ATTTGGC", "TGCCTTA", "CGGTATC", "GAAAATT"},
+			[]string{"ATA", "ATT", "GTT", "TTT"},
+		},
+		{3, 0,
+			[]string{"ACGT", "ACGT", "ACGT"},
+			[]string{"ACG", "CGT"},
+		},
+		{3, 1,
+			[]string{"AAAAA", "AAAAA", "AAAAA"},
+			[]string{"AAA", "AAC", "AAG", "AAT", "ACA", "AGA", "ATA", "CAA", "GAA", "TAA"},
+		},
+		{3, 3,
+			[]string{"AAAAA", "AAAAA", "AAAAA"},
+			[]string{"AAA", "AAC", "AAG", "AAT", "ACA", "ACC", "ACG", "ACT", "AGA", "AGC", "AGG", "AGT", "ATA", "ATC", "ATG", "ATT", "CAA", "CAC", "CAG", "CAT", "CCA", "CCC", "CCG", "CCT", "CGA", "CGC", "CGG", "CGT", "CTA", "CTC", "CTG", "CTT", "GAA", "GAC", "GAG", "GAT", "GCA", "GCC", "GCG", "GCT", "GGA", "GGC", "GGG", "GGT", "GTA", "GTC", "GTG", "GTT", "TAA", "TAC", "TAG", "TAT", "TCA", "TCC", "TCG", "TCT", "TGA", "TGC", "TGG", "TGT", "TTA", "TTC", "TTG", "TTT"},
+		},
+		{3, 0,
+			[]string{"AAAAA", "AAAAA", "AACAA"},
+			[]string{},
+		},
+		{3, 0,
+			[]string{"AACAA", "AAAAA", "AAAAA"},
+			[]string{},
+		},
+	}
+	for _, test := range tests {
+
+		// Money shot
+		results, err := FindMotifs(test.dna, test.k, test.d)
+
+		if err != nil {
+			t.Error(err)
+		}
+
+		// Sort before comparing
+		sort.Strings(test.gold)
+		sort.Strings(results)
+
+		if !EqualStringSlices(results, test.gold) {
+			msg := fmt.Sprintf("Error testing FindMotifs()\nk = %d, d = %d, len(dna) = %d\ncomputed = %v\ngold = %v",
+				test.k, test.d, len(test.dna),
+				results, test.gold)
+			t.Error(msg)
+		}
+	}
+}
+
+// Test the FindMotifs function using a large
+// test case loaded from a file.
 func TestFindMotifsFile(t *testing.T) {
 	filename := "data/motif_enumeration.txt"
 
@@ -112,7 +171,11 @@ func TestFindMotifsFile(t *testing.T) {
 	}
 
 	// Money shot
-	results, _ := FindMotifs(dna, k, d)
+	results, err := FindMotifs(dna, k, d)
+
+	if err != nil {
+		t.Error(err)
+	}
 
 	// Sort before comparing
 	sort.Strings(gold)
