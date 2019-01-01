@@ -1,4 +1,4 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
@@ -8,21 +8,19 @@ import (
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1K: Generate Frequency Array
+// Rosalind: Problem BA1M: Pattern to Number
 
 // Describe the problem
-func BA1KDescription() {
+func BA1MDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1K:",
-		"Generate Frequency Array",
+		"Rosalind: Problem BA1M:",
+		"Number to Pattern",
 		"",
-		"Given an integer k, generate the frequency array of",
-		"an input string. The frequency array is an array of",
-		"counts with one count per index, and integers mapped",
-		"to kmers.",
+		"Given an integer and a kmer length k, convert",
+		"the integer to its corresponding kmer.",
 		"",
-		"URL: http://rosalind.info/problems/ba1k/",
+		"URL: http://rosalind.info/problems/ba1m/",
 		"",
 	}
 	for _, line := range description {
@@ -31,9 +29,9 @@ func BA1KDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1K(filename string) {
+func BA1M(filename string) {
 
-	BA1KDescription()
+	BA1MDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -43,20 +41,22 @@ func BA1K(filename string) {
 	}
 
 	// Input file contents
-	input := lines[0]
+	number_str := lines[0]
 	k_str := lines[1]
+
+	number, err := strconv.Atoi(number_str)
+	if err != nil {
+		log.Fatalf("Error: string to int conversion for number: %v", err)
+	}
 
 	k, err := strconv.Atoi(k_str)
 	if err != nil {
-		log.Fatalf("Error: string to int conversion for parameter k: %v", err)
+		log.Fatalf("Error: string to int conversion for k: %v", err)
 	}
 
-	arr, _ := rosa.FrequencyArray(input, k)
+	result, _ := rosa.NumberToPattern(number, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	for _, e := range arr {
-		fmt.Print(e, " ")
-	}
-	//fmt.Println(strings.Join(arr, " "))
+	fmt.Println(result)
 }

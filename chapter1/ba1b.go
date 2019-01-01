@@ -1,26 +1,28 @@
-package rosalindchapter01
+package rosalindchapter1
 
 import (
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
-// Rosalind: Problem BA1L: Pattern to Number
+// Rosalind: Problem BA1B: Most Frequent k-mers
 
 // Describe the problem
-func BA1LDescription() {
+func BA1BDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA1L:",
-		"Pattern to Number",
+		"Rosalind: Problem BA1B:",
+		"Most Frequest k-mers",
 		"",
-		"Given an input kmer of length k, convert it to",
-		"an integer corresponding to its lexicographic",
-		"order among kmers of length k.",
+		"Given an input string and a length k,",
+		"report the k-mer or k-mers that occur",
+		"most frequently.",
 		"",
-		"URL: http://rosalind.info/problems/ba1l/",
+		"URL: http://rosalind.info/problems/ba1b/",
 		"",
 	}
 	for _, line := range description {
@@ -29,9 +31,9 @@ func BA1LDescription() {
 }
 
 // Describe the problem, and call the function
-func BA1L(filename string) {
+func BA1B(filename string) {
 
-	BA1LDescription()
+	BA1BDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -42,10 +44,16 @@ func BA1L(filename string) {
 
 	// Input file contents
 	input := lines[0]
+	k_str := lines[1]
 
-	number, _ := rosa.PatternToNumber(input)
+	k, err := strconv.Atoi(k_str)
+	if err != nil {
+		log.Fatalf("Error: string to int conversion: %v", err)
+	}
+
+	mfks, _ := rosa.MostFrequentKmers(input, k)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(number)
+	fmt.Println(strings.Join(mfks, " "))
 }
