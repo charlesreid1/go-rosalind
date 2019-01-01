@@ -13,11 +13,11 @@ functionality for solving bioinformatics problems. This is mainly
 useful for problems on Rosalind.info but is for general use as well.
 
 Rosalind problems are grouped by chapter. Each problem has its own 
-function and is implemented in a library called `chapter01`, `chapter02`,
+function and is implemented in a library called `chapter1`, `chapter2`,
 etc.
 
 For example, Chapter 1 question A is implemented in package
-`chapter01` as the function `BA1A( <input-file-name> )`. 
+`chapter1` as the function `BA1a( <input-file-name> )`. 
 This (specific) functionality wraps the (general purpose)
 `rosalind` library.
 
@@ -59,7 +59,7 @@ available.
 You can install the Chapter 1 problem set, for example, like so:
 
 ```
-go get https://github.com/charlesreid1/go-rosalind/chapter01
+go get https://github.com/charlesreid1/go-rosalind/chapter1
 ```
 
 This can now be imported and used in any Go program. Try creating
@@ -70,17 +70,18 @@ a new Go program in a temporary directory and running it with
 package main
 
 import (
-    rch1 "github.com/charlesreid1/go-rosalind/chapter01"
+    rch1 "github.com/charlesreid1/go-rosalind/chapter1"
 )
 
 func main() {
     filename := "rosalind_ba1a.txt"
-    rch1.BA1A(filename)
+    rch1.BA1a(filename)
 }
 ```
 
-Assuming an input file is available, you should see a problem description
-and the output of the problem, which can be copied and pasted into 
+Assuming an input file `rosalind_ba1a.txt` is available,
+you should see a problem description and the output of
+the problem, which can be copied and pasted into
 Rosalind.info.
 
 ## Command Line Interface
@@ -91,11 +92,11 @@ TBA
 
 The repo contains the following directories:
 
-* `chapter01/` - initial working directory; standalone code
+* `rosalind/` - code and functions for the Rosalind library
 
-* `chapter02/` - first set of solutions utilizing `rosalind` library
+* `chapter1/` - solutions to chapter 1 questions (utilizes `rosalind` library)
 
-* `rosalind/` - contains Rosalind library
+* `chapter2/` - solutions to chapter 2 questions
 
 See the Readme file in each respective directory for more info.
 
