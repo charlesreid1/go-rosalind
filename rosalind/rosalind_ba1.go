@@ -994,8 +994,8 @@ func PatternToNumber(input string) (int, error) {
 // large k.
 func NumberToPattern(n, k int) (string, error) {
 
-	if n < 1 || k < 1 {
-		msg := fmt.Sprintf("Error: inputs must be positive nonzero numbers. You specified n = %d, k = %d",
+	if n < 0 || k < 1 {
+		msg := fmt.Sprintf("Error: inputs must be positive (k nonzero). You specified n = %d, k = %d",
 			n, k)
 		return "", errors.New(msg)
 	}

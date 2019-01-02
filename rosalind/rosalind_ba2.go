@@ -166,7 +166,7 @@ func MinKmerDistances(pattern string, inputs []string) (int, error) {
 	return s, nil
 }
 
-func MedianString(k int, dna []string) {
+func MedianString(dna []string, k int) ([]string, error) {
 
 	// Algorithm:
 
@@ -184,4 +184,100 @@ func MedianString(k int, dna []string) {
 	//             dist = dist(this_kmer,that_kmer)
 	//			   min_dist = min(min_dist,dist)
 
+	// Turn each DNA string into a set of kmers
+	histograms := make([]map[string]int, len(dna))
+	for i, dna_i := range dna {
+		h, err := KmerHistogram(dna_i, k)
+		if err != nil {
+			msg := fmt.Sprintf("Error: KmerHistogram(%s, %d) returned an error",
+				dna_i, k)
+			return nil, errors.New(msg)
+		}
+		histograms[i] = h
+	}
+
+	// Total number of possible kmer
+	maxx := 1
+	for i := 0; i < k; i++ {
+		maxx *= 4
+	}
+
+	// Track min distance sum d(pattern,dna)
+	// for all possible kmer patterns
+	distances := make([]int, maxx)
+
+	// Iterate over every possible kmer
+	for iK := 0; iK < maxx; iK++ {
+
+		// Turn integer iK into kmer pattern
+		pattern, err := NumberToPattern(iK, k)
+		if err != nil {
+			msg := fmt.Sprintf("Error: NumberToPattern(%d,%d) raised an error",
+				iK, k)
+			return nil, errors.New(msg)
+		}
+
+		// Accumulate a min distance sum \sigma d(pattern,dna)
+		sigma_min_d := 0
+
+		// Iterate over every possible DNA string('s histogram)
+		for _, histogram := range histograms {
+
+			// Accumulate a min distance d(pattern,dna)
+			// for this kmer pattern
+			// and this DNA string
+			min_d := 0
+
+			// Iterate over kmers in this DNA string('s histogram)
+			for this_kmer, _ := range histogram {
+				d, err := HammingDistance(this_kmer, pattern)
+				if err != nil {
+					msg := fmt.Sprintf("Error: HammingDistance(%s,%s) returned error",
+						this_kmer, pattern)
+					return nil, errors.New(msg)
+				}
+				if d < min_d {
+					// New minimum
+					min_d = d
+				}
+			}
+
+			// Accumulate
+			sigma_min_d += min_d
+		}
+
+		distances[iK] = sigma_min_d
+
+	}
+
+	// Find and return the kmer
+	// corresponding to the index (indices)
+	// of the min distance array
+	// with the minimum value(s)
+	running_min := distances[0]
+	//results_int := []int{}
+	results_str := []string{}
+	for i, d := range distances {
+		if d < running_min {
+			//results_int = []int{i}
+			s, err := NumberToPattern(i, k)
+			if err != nil {
+				msg := fmt.Sprintf("Error: NumberToPattern(%d,%d) returned error",
+					i, k)
+				return nil, errors.New(msg)
+			}
+			results_str = []string{s}
+
+		} else if d == running_min {
+			//results_int = append(results_int, i)
+			s, err := NumberToPattern(i, k)
+			if err != nil {
+				msg := fmt.Sprintf("Error: NumberToPattern(%d,%d) returned error",
+					i, k)
+				return nil, errors.New(msg)
+			}
+			results_str = append(results_str, s)
+		}
+	}
+	return results_str, nil
 }
