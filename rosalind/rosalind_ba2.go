@@ -226,9 +226,10 @@ func MedianString(dna []string, k int) ([]string, error) {
 			// Accumulate a min distance d(pattern,dna)
 			// for this kmer pattern
 			// and this DNA string
-			min_d := 0
+			min_d := k
 
 			// Iterate over kmers in this DNA string('s histogram)
+			// (k,v - map)
 			for this_kmer, _ := range histogram {
 				d, err := HammingDistance(this_kmer, pattern)
 				if err != nil {
@@ -250,34 +251,32 @@ func MedianString(dna []string, k int) ([]string, error) {
 
 	}
 
-	// Find and return the kmer
-	// corresponding to the index (indices)
-	// of the min distance array
-	// with the minimum value(s)
+	// Find the kmer corresponding to the minimum distance
 	running_min := distances[0]
-	//results_int := []int{}
-	results_str := []string{}
+	var results_str []string
 	for i, d := range distances {
 		if d < running_min {
-			//results_int = []int{i}
-			s, err := NumberToPattern(i, k)
+			p, err := NumberToPattern(i, k)
 			if err != nil {
 				msg := fmt.Sprintf("Error: NumberToPattern(%d,%d) returned error",
 					i, k)
 				return nil, errors.New(msg)
 			}
-			results_str = []string{s}
+			// New running min, new min kmer
+			running_min = d
+			results_str = []string{p}
 
 		} else if d == running_min {
-			//results_int = append(results_int, i)
-			s, err := NumberToPattern(i, k)
+			p, err := NumberToPattern(i, k)
 			if err != nil {
 				msg := fmt.Sprintf("Error: NumberToPattern(%d,%d) returned error",
 					i, k)
 				return nil, errors.New(msg)
 			}
-			results_str = append(results_str, s)
+			// Another running min, another min kmer
+			results_str = append(results_str, p)
 		}
 	}
+
 	return results_str, nil
 }

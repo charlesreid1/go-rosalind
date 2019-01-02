@@ -10,7 +10,7 @@ import (
 )
 
 /////////////////////////////////
-// BA2A Test
+// BA2a Test
 
 func TestKeySetIntersection(t *testing.T) {
 	gold := []string{"AAA", "BBB"}
@@ -189,6 +189,9 @@ func TestFindMotifsFile(t *testing.T) {
 	}
 }
 
+/////////////////////////////////
+// BA2b Test
+
 // Test the MinKmerDistance function.
 func TestMatrixMinKmerDistance(t *testing.T) {
 	var tests = []struct {
@@ -250,5 +253,36 @@ func TestMatrixMinKmerDistances(t *testing.T) {
 			t.Error(msg)
 		}
 
+	}
+}
+
+// Test MedianString
+func TestMedianString(t *testing.T) {
+	k := 3
+	dna := []string{
+		"AAATTGACGCAT",
+		"GACGACCACGTT",
+		"CGTCAGCGCCTG",
+		"GCTGAGCACCGG",
+		"AGTACGGGACAG",
+	}
+	result, _ := MedianString(dna, k)
+
+	gold := "GAC"
+
+	// Since they only report one kmer, and we report all,
+	// we should check if their kmer is in our slice.
+	var passed_test bool
+	for _, r := range result {
+		if r == gold {
+			passed_test = true
+			break
+		}
+	}
+	if !passed_test {
+		// Uh oh, their kmer is not in our slice.
+		msg := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers in gold not in results.\ncomputed = %q\ngold     = %q\n",
+			result, gold)
+		t.Error(msg)
 	}
 }
