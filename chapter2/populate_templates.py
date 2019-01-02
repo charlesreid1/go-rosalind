@@ -14,13 +14,13 @@ def main():
             'description': 'Given a collection of strings of DNA, find all motifs (kmers of length k and Hamming distance d from all DNA strings).',
             'url': 'http://rosalind.info/problems/ba2a/'
         },
-        #{
-        #    'chapter': '2',
-        #    'problem': 'b',
-        #    'title': 'Find a Median String',
-        #    'description': 'Given a set of DNA strings, find a k-mer pattern that minimizes the magnitude of the distance from it to the minimum Hamming distance (closest Hamming neighbor) kmer in each DNA string',
-        #    'url': 'http://rosalind.info/problems/ba2b/'
-        #},
+        {
+            'chapter': '2',
+            'problem': 'b',
+            'title': 'Find a Median String',
+            'description': 'Given a kmer length k and a set of strings of DNA, find the kmer(s) that minimize the L1 norm of the distance from it to all other DNA strings.',
+            'url': 'http://rosalind.info/problems/ba2b/'
+        },
         #{
         #    'chapter': '2',
         #    'problem': 'c',

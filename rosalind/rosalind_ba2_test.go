@@ -10,7 +10,7 @@ import (
 )
 
 /////////////////////////////////
-// BA2A Test
+// BA2a Test
 
 func TestKeySetIntersection(t *testing.T) {
 	gold := []string{"AAA", "BBB"}
@@ -185,6 +185,104 @@ func TestFindMotifsFile(t *testing.T) {
 	if !EqualStringSlices(results, gold) {
 		msg := fmt.Sprintf("Error testing FindMotifs()\ncomputed = %v\ngold = %v",
 			results, gold)
+		t.Error(msg)
+	}
+}
+
+/////////////////////////////////
+// BA2b Test
+
+// Test the MinKmerDistance function.
+func TestMatrixMinKmerDistance(t *testing.T) {
+	var tests = []struct {
+		pattern string
+		text    string
+		d       int
+	}{
+		{"ATA", "AAATTGACGCAT", 1},
+		{"AAA", "AAAAAAAAAAA", 0},
+		{"AAA", "CCCCCCCCC", 3},
+		{"AAA", "GAAGAAGAAGAA", 1},
+		{"AAAA", "GAAG", 2},
+		{"AAAA", "GAAGAA", 1},
+	}
+	for _, test := range tests {
+
+		// Money shot
+		c, err := MinKmerDistance(test.pattern, test.text)
+		if err != nil {
+			t.Error(err)
+		}
+		if c != test.d {
+			msg := fmt.Sprintf("Error testing MinKmerDistance()\npattern = %s, text = %s\ncomputed = %d\ngold = %d",
+				test.pattern, test.text,
+				c, test.d)
+			t.Error(msg)
+		}
+
+	}
+}
+
+// Test the MinKmerDistances function.
+func TestMatrixMinKmerDistances(t *testing.T) {
+	var tests = []struct {
+		pattern string
+		inputs  []string
+		d       int
+	}{
+		{
+			"AAA",
+			[]string{"AAAA", "CCCC", "GGGG", "TTTT"},
+			9},
+		{
+			"AAA",
+			[]string{"GAAG", "CAAC", "TAAG", "TAAC"},
+			4},
+	}
+	for _, test := range tests {
+
+		// Money shot
+		c, err := MinKmerDistances(test.pattern, test.inputs)
+		if err != nil {
+			t.Error(err)
+		}
+		if c != test.d {
+			msg := fmt.Sprintf("Error testing MinKmerDistance()\npattern = %s, inputs = %v\ncomputed = %d\ngold = %d",
+				test.pattern, test.inputs,
+				c, test.d)
+			t.Error(msg)
+		}
+
+	}
+}
+
+// Test MedianString
+func TestMedianString(t *testing.T) {
+	k := 3
+	dna := []string{
+		"AAATTGACGCAT",
+		"GACGACCACGTT",
+		"CGTCAGCGCCTG",
+		"GCTGAGCACCGG",
+		"AGTACGGGACAG",
+	}
+	result, _ := MedianString(dna, k)
+
+	gold := "GAC"
+
+	// Since they only report one kmer, and we report all,
+	// we should check if their kmer is in our slice.
+	var passed_test bool
+	for _, r := range result {
+		if r == gold {
+			passed_test = true
+			break
+		}
+	}
+	if !passed_test {
+		// Uh oh, their kmer is not in our slice.
+		msg := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers in gold not in results.\ncomputed = %q\ngold     = %q\n",
+			result, gold)
 		t.Error(msg)
 	}
 }

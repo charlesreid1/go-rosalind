@@ -20,9 +20,9 @@ func TestPatternCount(t *testing.T) {
 	result := PatternCount(input, pattern)
 	gold := 2
 	if result != gold {
-		err := fmt.Sprintf("Error testing PatternCount(): input = %s, pattern = %s, result = %d (should be %d)",
+		msg := fmt.Sprintf("Error testing PatternCount(): input = %s, pattern = %s, result = %d (should be %d)",
 			input, pattern, result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -52,9 +52,9 @@ func TestMatrixPatternCount(t *testing.T) {
 	for _, test := range tests {
 		result := PatternCount(test.input, test.pattern)
 		if result != test.gold {
-			err := fmt.Sprintf("Error testing PatternCount(): input = %s, pattern = %s, result = %d (should be %d)",
+			msg := fmt.Sprintf("Error testing PatternCount(): input = %s, pattern = %s, result = %d (should be %d)",
 				test.input, test.pattern, result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -84,7 +84,8 @@ func TestPatternCountFile(t *testing.T) {
 	// Convert output to inteter
 	output, err := strconv.Atoi(output_str)
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Call the function with the given inputs
@@ -92,8 +93,8 @@ func TestPatternCountFile(t *testing.T) {
 
 	// Verify answer
 	if result != output {
-		err := fmt.Sprintf("Error testing PatternCount using test case from file: results do not match:\rcomputed result = %d\nexpected output = %d", result, output)
-		t.Error(err)
+		msg := fmt.Sprintf("Error testing PatternCount using test case from file: results do not match:\rcomputed result = %d\nexpected output = %d", result, output)
+		t.Error(msg)
 	}
 }
 
@@ -109,13 +110,14 @@ func TestMostFrequentKmers(t *testing.T) {
 	gold := []string{"AAAA"}
 
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	if !EqualStringSlices(result, gold) {
-		err := fmt.Sprintf("Error testing MostFrequentKmers(): input = %s, k = %d, result = %s (should be %s)",
+		msg := fmt.Sprintf("Error testing MostFrequentKmers(): input = %s, k = %d, result = %s (should be %s)",
 			input, k, result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -141,7 +143,8 @@ func TestMostFrequentKmersFile(t *testing.T) {
 	// Convert k to integer
 	k, err := strconv.Atoi(k_str)
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Call the function with the given inputs
@@ -149,14 +152,15 @@ func TestMostFrequentKmersFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Check that there _was_ a result
 	if len(result) == 0 {
-		err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: length of most frequent kmers found was 0: %q",
+		msg := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: length of most frequent kmers found was 0: %q",
 			result)
-		t.Error(err)
+		t.Error(msg)
 	}
 
 	// Sort before comparing
@@ -165,9 +169,9 @@ func TestMostFrequentKmersFile(t *testing.T) {
 
 	// These will only be unequal if something went wrong
 	if !EqualStringSlices(gold, result) {
-		err := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
+		msg := fmt.Sprintf("Error testing MostFrequentKmers using test case from file: most frequent kmers do not match.\ncomputed = %q\ngold     = %q\n",
 			result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -185,8 +189,8 @@ func TestDNA2Bitmasks(t *testing.T) {
 
 	// Handle errors from in the DNA2Bitmasks function
 	if func_err != nil {
-		err := fmt.Sprintf("Error in function DNA2Bitmasks(): input = %s", input)
-		t.Error(err)
+		msg := fmt.Sprintf("Error in function DNA2Bitmasks(): input = %s", input)
+		t.Error(msg)
 	}
 
 	// Assemble gold standard answer (bitvectors)
@@ -203,9 +207,9 @@ func TestDNA2Bitmasks(t *testing.T) {
 	for _, cod := range "ATCG" {
 		cods := string(cod)
 		if !EqualBoolSlices(result[cods], gold[cods]) {
-			err := fmt.Sprintf("Error testing DNA2Bitmasks(): input = %s, codon = %s, extracted = %v, gold = %v",
+			msg := fmt.Sprintf("Error testing DNA2Bitmasks(): input = %s, codon = %s, extracted = %v, gold = %v",
 				input, cods, result[cods], gold[cods])
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -229,15 +233,15 @@ func TestBitmasks2DNA(t *testing.T) {
 
 	// Handle errors from in the DNA2Bitmasks function
 	if func_err != nil {
-		err := fmt.Sprintf("Error in function Bitmasks2DNA(): function returned error")
-		t.Error(err)
+		msg := fmt.Sprintf("Error in function Bitmasks2DNA(): function returned error")
+		t.Error(msg)
 	}
 
 	// Verify result from DNA2Bitmasks is same as
 	// our gold standard
 	if result != gold {
-		err := fmt.Sprintf("Error testing Bitmasks2DNA(): result = %s, gold = %s", result, gold)
-		t.Error(err)
+		msg := fmt.Sprintf("Error testing Bitmasks2DNA(): result = %s, gold = %s", result, gold)
+		t.Error(msg)
 	}
 }
 
@@ -248,9 +252,9 @@ func TestReverseComplement(t *testing.T) {
 	result, _ := ReverseComplement(input)
 	gold := "ACCGGGTTTT"
 	if result != gold {
-		err := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
+		msg := fmt.Sprintf("Error testing ReverseComplement(): input = %s, result = %s (should be %s)",
 			input, result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -264,7 +268,8 @@ func TestReverseComplementFile(t *testing.T) {
 	// into a single string
 	lines, err := ReadLines(filename)
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// lines[0]: Input
@@ -300,9 +305,9 @@ func TestFindOccurrences(t *testing.T) {
 	gold := []int{1, 3, 9}
 
 	if !EqualIntSlices(result, gold) || err != nil {
-		err := fmt.Sprintf("Error testing FindOccurrences(): result = %q, should be %q",
+		msg := fmt.Sprintf("Error testing FindOccurrences(): result = %q, should be %q",
 			result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -327,13 +332,14 @@ func TestFindOccurrencesDebug(t *testing.T) {
 		result, err := FindOccurrences(test.pattern, test.genome)
 
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		if !EqualIntSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing FindOccurrences(): result = %q, should be %q",
+			msg := fmt.Sprintf("Error testing FindOccurrences(): result = %q, should be %q",
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -361,20 +367,22 @@ func TestFindOccurrencesFiles(t *testing.T) {
 	for i, g := range gold_slice {
 		gold[i], err = strconv.Atoi(g)
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 	}
 
 	result, err := FindOccurrences(pattern, genome)
 
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	if !EqualIntSlices(result, gold) {
-		err := fmt.Sprintf("Error testing FindOccurrences():\nresult = %v\ngold   = %v\n",
+		msg := fmt.Sprintf("Error testing FindOccurrences():\nresult = %v\ngold   = %v\n",
 			result, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -408,11 +416,12 @@ func TestMatrixFindClumps(t *testing.T) {
 		result, err := FindClumps(test.genome,
 			test.k, test.L, test.t)
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 		if !EqualStringSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing FindClumps(): k = %d, L = %d, t = %d", test.k, test.L, test.t)
-			t.Error(err)
+			msg := fmt.Sprintf("Error testing FindClumps(): k = %d, L = %d, t = %d", test.k, test.L, test.t)
+			t.Error(msg)
 		}
 	}
 }
@@ -445,24 +454,25 @@ func TestMatrixMinSkewPosition(t *testing.T) {
 		// Do it - find the positions that minimize skew
 		result, err := MinSkewPositions(test.genome)
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		// Check length of result
 		if len(result) != len(test.gold) {
-			err := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nlength of result (%d) did not match length of gold standard (%d).\nFound: %v\nShould be: %v",
+			msg := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nlength of result (%d) did not match length of gold standard (%d).\nFound: %v\nShould be: %v",
 				test.genome, len(result), len(test.gold),
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 
 		// Sort before comparing
 		sort.Ints(result)
 		sort.Ints(test.gold)
 		if !EqualIntSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nfound: %v\nshould be: %v",
+			msg := fmt.Sprintf("Error testing MinSkewPositions():\nfor genome: %s\nfound: %v\nshould be: %v",
 				test.genome, result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -503,13 +513,14 @@ func TestMatrixHammingDistance(t *testing.T) {
 	for _, test := range tests {
 		result, err := HammingDistance(test.p, test.q)
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 		if result != test.dist {
-			err := fmt.Sprintf("Error testing HammingDistance(): computed dist = %d (should be %d)\np = %s\nq = %s\n",
+			msg := fmt.Sprintf("Error testing HammingDistance(): computed dist = %d (should be %d)\np = %s\nq = %s\n",
 				result, test.dist,
 				test.p, test.q)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -558,12 +569,13 @@ func TestMatrixApproximateOccurrences(t *testing.T) {
 	for _, test := range tests {
 		result, err := FindApproximateOccurrences(test.pattern, test.text, test.d)
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 		if !EqualIntSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing FindApproximateOccurrences:\ncomputed = %v\ngold     = %v",
+			msg := fmt.Sprintf("Error testing FindApproximateOccurrences:\ncomputed = %v\ngold     = %v",
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -591,12 +603,13 @@ func TestMatrixCountHammingNeighbors(t *testing.T) {
 
 		// Check if there was error
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 		if result != test.gold {
-			err := fmt.Sprintf("Error testing CountHammingNeighbors:\ncomputed = %d\ngold     = %d",
+			msg := fmt.Sprintf("Error testing CountHammingNeighbors:\ncomputed = %d\ngold     = %d",
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -618,7 +631,8 @@ func TestMatrixVisitHammingNeighbors(t *testing.T) {
 
 		// Check if there was error
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		// Sort before comparing
@@ -626,9 +640,9 @@ func TestMatrixVisitHammingNeighbors(t *testing.T) {
 		sort.Strings(result)
 
 		if !EqualStringSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing VisitHammingNeighbors:\ncomputed = %v\ngold     = %v",
+			msg := fmt.Sprintf("Error testing VisitHammingNeighbors:\ncomputed = %v\ngold     = %v",
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -680,7 +694,8 @@ func TestMatrixMostFrequentKmersMismatches(t *testing.T) {
 
 		// Check if there was error
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		// Sort before comparing
@@ -688,10 +703,10 @@ func TestMatrixMostFrequentKmersMismatches(t *testing.T) {
 		sort.Strings(result)
 
 		if !EqualStringSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing MostFrequentKmersMismatches():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n",
+			msg := fmt.Sprintf("Error testing MostFrequentKmersMismatches():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n",
 				test.input, test.k, test.d,
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -732,7 +747,8 @@ func TestMostFrequentKmersMismatchesFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Check that there _was_ a result
@@ -776,7 +792,8 @@ func TestMatrixMostFrequentKmersMismatchesRevComp(t *testing.T) {
 
 		// Check if there was error
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		// Sort before comparing
@@ -784,10 +801,10 @@ func TestMatrixMostFrequentKmersMismatchesRevComp(t *testing.T) {
 		sort.Strings(result)
 
 		if !EqualStringSlices(result, test.gold) {
-			err := fmt.Sprintf("Error testing MostFrequentKmersMismatchesRevComp():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n",
+			msg := fmt.Sprintf("Error testing MostFrequentKmersMismatchesRevComp():\ninput = %s, k = %d, d = %d\ncomputed = %v\ngold     = %v\n",
 				test.input, test.k, test.d,
 				result, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -829,7 +846,8 @@ func TestMostFrequentKmersMismatchesRevCompFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v",err)
+		t.Error(msg)
 	}
 
 	// Check that there _was_ a result
@@ -881,14 +899,15 @@ func TestMatrixFrequencyArray(t *testing.T) {
 
 		// Check if there was error
 		if err != nil {
-			t.Error(err)
+			msg := fmt.Sprintf("Error: %v", err)
+			t.Error(msg)
 		}
 
 		if !EqualIntSlices(freq_arr, test.gold) {
-			err := fmt.Sprintf("Error testing FrequencyArray():\ninput = %s, k = %d\ncomputed = %v\ngold     = %v\n",
+			msg := fmt.Sprintf("Error testing FrequencyArray():\ninput = %s, k = %d\ncomputed = %v\ngold     = %v\n",
 				test.input, test.k,
 				freq_arr, test.gold)
-			t.Error(err)
+			t.Error(msg)
 		}
 	}
 }
@@ -905,13 +924,14 @@ func TestPatternToNumber(t *testing.T) {
 
 	// Check if there was error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	if number != gold {
-		err := fmt.Sprintf("Error testing PatternToNumber():\ninput = %s\ncomputed = %v\ngold     = %v\n",
+		msg := fmt.Sprintf("Error testing PatternToNumber():\ninput = %s\ncomputed = %v\ngold     = %v\n",
 			input, number, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -940,14 +960,15 @@ func TestPatternToNumberFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// These will only be unequal if something went wrong
 	if number != gold {
-		err := fmt.Sprintf("Error testing PatternToNumber():\ninput = %s\ncomputed = %v\ngold     = %v\n",
+		msg := fmt.Sprintf("Error testing PatternToNumber():\ninput = %s\ncomputed = %v\ngold     = %v\n",
 			input, number, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -964,7 +985,8 @@ func TestNumberToPattern(t *testing.T) {
 
 	// Check if there was error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	if pattern != gold {
@@ -1005,14 +1027,15 @@ func TestNumberToPatternFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// These will only be unequal if something went wrong
 	if pattern != gold {
-		err := fmt.Sprintf("Error testing NumberToPattern():\nn = %d, k = %d\ncomputed = %v\ngold     = %v\n",
+		msg := fmt.Sprintf("Error testing NumberToPattern():\nn = %d, k = %d\ncomputed = %v\ngold     = %v\n",
 			n, k, pattern, gold)
-		t.Error(err)
+		t.Error(msg)
 	}
 }
 
@@ -1029,7 +1052,8 @@ func TestVisitNeighborhood(t *testing.T) {
 
 	// Check if there was error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Sort before comparing
@@ -1074,7 +1098,8 @@ func TestVisitNeighborhoodFile(t *testing.T) {
 
 	// Check if function threw error
 	if err != nil {
-		t.Error(err)
+		msg := fmt.Sprintf("Error: %v", err)
+		t.Error(msg)
 	}
 
 	// Check that there _was_ a result
