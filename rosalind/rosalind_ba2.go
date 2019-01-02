@@ -166,22 +166,22 @@ func MinKmerDistances(pattern string, inputs []string) (int, error) {
 	return s, nil
 }
 
-// k
-// Given a k-mer Pattern and a longer string Text, we use d(Pattern, Text) to denote the minimum Hamming distance between Pattern and any k-mer in Text,
-//
-//d(Pattern,Text)=minall k-mers Pattern' in TextHammingDistance(Pattern,Pattern′).
-//
-//Given a k-mer Pattern and a set of strings Dna = {Dna1, … , Dnat}, we define d(Pattern, Dna) as the sum of distances between Pattern and all strings in Dna,
-//
-//d(Pattern,Dna)=∑i=1td(Pattern,Dnai).
-//
-//Our goal is to find a k-mer Pattern that minimizes d(Pattern, Dna) over all k-mers Pattern, the same task that the Equivalent Motif Finding Problem is trying to achieve. We call such a k-mer a median string for Dna.
-//Median String Problem
-//
-//Find a median string.
-//
-//Given: An integer k and a collection of strings Dna.
-//
-//Return: A k-mer Pattern that minimizes d(Pattern, Dna) over all k-mers Pattern. (If multiple answers exist, you may return any one.)
-//
-//
+func MedianString(k int, dna []string) {
+
+	// Algorithm:
+
+	// start with set of DNA strings dna_i
+
+	// turn each string into set of k-mers
+	// set_dna_i is set of k-mers from string dna_i
+
+	// for this_kmer in all_kmers:
+	//
+	//     for set in set_dna_i:
+	//
+	//         min_dist = k
+	//         for that_kmer in set:
+	//             dist = dist(this_kmer,that_kmer)
+	//			   min_dist = min(min_dist,dist)
+
+}
