@@ -62,9 +62,10 @@ You can install the Chapter 1 problem set, for example, like so:
 go get https://github.com/charlesreid1/go-rosalind/chapter1
 ```
 
-This can now be imported and used in any Go program. Try creating
-a new Go program in a temporary directory and running it with
-`go run`:
+This can now be imported and used in any Go program. 
+
+Try creating a `main.go` file in a temporary directory,
+and run it with `go run main.go`:
 
 ```
 package main
@@ -82,7 +83,25 @@ func main() {
 Assuming an input file `rosalind_ba1a.txt` is available,
 you should see a problem description and the output of
 the problem, which can be copied and pasted into
-Rosalind.info.
+Rosalind.info:
+
+```
+$ go run main.go
+
+-----------------------------------------
+Rosalind: Problem BA1a:
+Most Frequest k-mers
+
+Given an input string and a length k,
+report the k-mer or k-mers that occur
+most frequently.
+
+URL: http://rosalind.info/problems/ba1a/
+
+
+Computed result from input file: for_real/rosalind_ba1a.txt
+39
+```
 
 ## Command Line Interface
 
