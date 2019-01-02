@@ -117,6 +117,8 @@ The repo contains the following directories:
 
 * `chapter2/` - solutions to chapter 2 questions
 
+* `chapter3/` - solutions to chapter 3 questions
+
 * `stronghold/` - solutions to questions from the stronghold section of Rosalind.info
 
 See the Readme file in each respective directory for more info.
