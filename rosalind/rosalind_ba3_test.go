@@ -131,6 +131,7 @@ func TestReconstructGenomeFile(t *testing.T) {
 
 	// lines[-2]: Output
 	gold := lines[len(lines)-1]
+	gold = strings.Trim(gold, " ")
 
 	results, err := ReconstructGenomeFromPath(contigs)
 	if err != nil {
@@ -141,7 +142,6 @@ func TestReconstructGenomeFile(t *testing.T) {
 	if len(results) != len(gold) {
 		msg := "Error testing ReconstructGenomeFromPath(): length of reconstructed genome does not match length of correct result\n"
 		msg += fmt.Sprintf("len(computed) = %d, len(gold) = %d\n", len(results), len(gold))
-		fmt.Println(gold[len(gold)-10:])
 		t.Error(msg)
 
 	} else if results != gold {
