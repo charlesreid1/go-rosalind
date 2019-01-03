@@ -2,6 +2,7 @@ package rosalind
 
 import (
 	"fmt"
+	"log"
 	"sort"
 	"strings"
 	"testing"
@@ -88,7 +89,7 @@ func TestKmerComposition(t *testing.T) {
 /////////////////////////////////
 // BA3b Test
 
-func TestReconstructGenomeFromPath(t *testing.T) {
+func TestReconstructGenome(t *testing.T) {
 	contigs := []string{"ACCGA", "CCGAA", "CGAAG", "GAAGC", "AAGCT"}
 	gold := "ACCGAAGCT"
 
@@ -99,6 +100,57 @@ func TestReconstructGenomeFromPath(t *testing.T) {
 	if results != gold {
 		msg := fmt.Sprintf("Error testing ReconstructGenomeFromPath():\ninputs = %s\ncomputed = %s\ngold     = %s",
 			strings.Join(contigs, " "), results, gold)
+		t.Error(msg)
+	}
+}
+
+func TestReconstructGenomeFile(t *testing.T) {
+
+	filename := "data/genome_path_string.txt"
+
+	// Read the contents of the input file
+	// into a single string
+	lines, err := ReadLines(filename)
+	if err != nil {
+		log.Fatalf("ReadLines: %v", err)
+	}
+
+	// Input file contents
+	// lines[0]: Input
+
+	// Make space for DNA fragments
+	contigs := make([]string, len(lines)-3)
+	iLstart := 1
+	iLend := len(lines) - 2
+	// Two counters:
+	// one for the line index (iL),
+	// one for the array index (iA).
+	for iA, iL := 0, iLstart; iL < iLend; iA, iL = iA+1, iL+1 {
+		contigs[iA] = lines[iL]
+	}
+
+	// lines[-2]: Output
+	gold := lines[len(lines)-1]
+
+	results, err := ReconstructGenomeFromPath(contigs)
+	if err != nil {
+		msg := "Error: ReconstructGenomeFromPath(): function returned an error"
+		t.Error(msg)
+	}
+
+	if len(results) != len(gold) {
+		msg := "Error testing ReconstructGenomeFromPath(): length of reconstructed genome does not match length of correct result\n"
+		msg += fmt.Sprintf("len(computed) = %d, len(gold) = %d\n", len(results), len(gold))
+		fmt.Println(gold[len(gold)-10:])
+		t.Error(msg)
+
+	} else if results != gold {
+		msg := "Error testing ReconstructGenomeFromPath(): computed genome and correct genome do not match\n"
+		for i := 0; i < len(results); i++ {
+			if results[i] != gold[i] {
+				msg += fmt.Sprintf("Difference at index i = %d: computed[%d] = %s, gold[%d] = %s\n", i, i, string(results[i]), i, string(gold[i]))
+			}
+		}
 		t.Error(msg)
 	}
 }
