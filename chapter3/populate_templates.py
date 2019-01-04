@@ -21,13 +21,13 @@ def main():
             'description': 'Reconstruct a string from its genome path, i.e., sequential fragments of overlapping DNA.',
             'url': 'http://rosalind.info/problems/ba3b/'
         },
-        #{
-        #    'chapter': '2',
-        #    'problem': 'c',
-        #    'title': 'Find a Profile-most Probable k-mer in a String',
-        #    'description': 'Given a profile matrix, find the most probable k-mer to generate the given DNA string.',
-        #    'url': 'http://rosalind.info/problems/ba2c/'
-        #},
+        {
+            'chapter': '3',
+            'problem': 'c',
+            'title': 'Construct the overlap graph of a set of k-mers',
+            'description': 'Given a set of overlapping k-mers, construct the overlap graph and print a sorted adjacency matrix',
+            'url': 'http://rosalind.info/problems/ba3c/'
+        },
     ]
     
     print("Writing problem boilerplate code")
