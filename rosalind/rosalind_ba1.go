@@ -780,8 +780,7 @@ func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int,
 	if depth == 0 {
 
 		// Base case
-		//go visit(base_kmer, choices, results)
-		visit(base_kmer, choices, results)
+		assemble_variations(base_kmer, choices, results)
 		return nil
 
 	} else {
@@ -816,7 +815,8 @@ func visitHammingNeighbors_recursive(base_kmer string, depth int, choices []int,
 // Given a base kmer and a choice of indices where
 // the kmer should be changed, generate all possible
 // variations on this base_kmer.
-func visit(base_kmer string, choices []int, results map[string]bool) {
+func assemble_variations(base_kmer string,
+	choices []int, results map[string]bool) {
 
 	// We have already made choices,
 	// so we don't need to make new choices,
@@ -841,7 +841,7 @@ func visit(base_kmer string, choices []int, results map[string]bool) {
 				if codon != this_codon {
 					// Swap out the old codon with the new codon
 					new_kmer := base_kmer[0:ch_ix] + codon + base_kmer[ch_ix+1:]
-					visit(new_kmer, choices, results)
+					assemble_variations(new_kmer, choices, results)
 				}
 			}
 		}
