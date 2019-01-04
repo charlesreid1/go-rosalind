@@ -158,3 +158,23 @@ func TestReconstructGenomeFile(t *testing.T) {
 		t.Error(msg)
 	}
 }
+
+/////////////////////////////////
+// BA3c Test
+
+func TestOverlapGraph(t *testing.T) {
+	patterns := []string{"ATGCG", "GCATG", "CATGC", "AGGCA", "GGCAT"}
+
+	g, err := OverlapGraph(patterns)
+	if err != nil {
+		t.Error(err)
+	}
+
+	s := g.String()
+	gold := "AGGCA -> GGCAT\nCATGC -> ATGCG\nGCATG -> CATGC\nGGCAT -> GCATG"
+
+	if s != gold {
+		msg := "Error testing OverlapGraph(): string representation of graphs don't match"
+		t.Error(msg)
+	}
+}

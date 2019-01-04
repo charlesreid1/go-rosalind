@@ -2,6 +2,7 @@ package rosalind
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"sync"
 )
@@ -23,14 +24,14 @@ func (n *Node) String() string {
 	return fmt.Sprintf("%s", n.name)
 }
 
-// add a node to the directed graph
+// Add a node to the directed graph
 func (g *DirGraph) AddNode(n *Node) {
 	g.lock.Lock()
 	g.nodes = append(g.nodes, n)
 	g.lock.Unlock()
 }
 
-// add a directed edge
+// Add a directed edge
 func (g *DirGraph) AddEdge(n1, n2 *Node) {
 	g.lock.Lock()
 	if g.edges == nil {
@@ -40,6 +41,7 @@ func (g *DirGraph) AddEdge(n1, n2 *Node) {
 	g.lock.Unlock()
 }
 
+// Get a total count of edges in the graph
 func (g *DirGraph) EdgeCount() int {
 	iC := 0
 	for _, targets := range g.edges {
@@ -50,6 +52,17 @@ func (g *DirGraph) EdgeCount() int {
 	return iC
 }
 
+// Get a node, given a label
+func (g *DirGraph) GetNode(label string) *Node {
+	for _, n := range g.nodes {
+		if n.name == label {
+			return n
+		}
+	}
+	return nil
+}
+
+// Return a sorted edge list representation of the graph
 func (g *DirGraph) String() string {
 	g.lock.RLock()
 
@@ -67,6 +80,7 @@ func (g *DirGraph) String() string {
 		}
 		iS += 1
 	}
+	sort.Strings(edge_strings)
 	result := strings.Join(edge_strings, "\n")
 
 	g.lock.RUnlock()

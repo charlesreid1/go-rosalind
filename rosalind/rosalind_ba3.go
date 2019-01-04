@@ -35,6 +35,10 @@ func KmerComposition(input string, k int) ([]string, error) {
 ////////////////////////////////
 // BA3b
 
+// Given a genome path, i.e., a set of k-mers that
+// overlap by some unknown number (up to k-1) of
+// characters each, assemble the paths into a
+// single string containing the genome.
 func ReconstructGenomeFromPath(contigs []string) (string, error) {
 
 	pieces := []string{}
@@ -87,4 +91,61 @@ func ReconstructGenomeFromPath(contigs []string) (string, error) {
 		}
 	}
 	return strings.Join(pieces, ""), nil
+}
+
+////////////////////////////////
+// BA3c
+
+// Given a set of k-mers, construct an overlap graph
+// where each k-mer is represented by a node, and each
+// directed edge represents a pair of k-mers such that
+// the suffix (k-1 chars) of the k-mer at the source of
+// the edge overlaps with the prefix (k-1 chars) of the
+// k-mer at the head of the edge.
+func OverlapGraph(patterns []string) (DirGraph, error) {
+
+	var g DirGraph
+
+	// Add every k-mer as a node to the overlap graph
+	k := len(patterns[0])
+	for _, pattern := range patterns {
+		n := Node{pattern}
+		g.AddNode(&n)
+
+		// Verify k-mers are all same length
+		if len(pattern) != k {
+			msg := fmt.Sprintf("Error: kmer lengths do not match, k = %d but len(\"%s\") = %d\n",
+				k, pattern, len(pattern))
+			return g, errors.New(msg)
+		}
+	}
+
+	// Iterate pairwise through the input patterns
+	// to determine which pairs should have edges
+	// and in which direction
+	for i, pattern1 := range patterns {
+		for j, pattern2 := range patterns {
+			if j > i {
+				prefix1 := pattern1[:k-1]
+				suffix1 := pattern1[1:]
+
+				prefix2 := pattern2[:k-1]
+				suffix2 := pattern2[1:]
+
+				if suffix1 == prefix2 {
+					// 1 -> 2
+					n1 := g.GetNode(pattern1)
+					n2 := g.GetNode(pattern2)
+					g.AddEdge(n1, n2)
+				} else if suffix2 == prefix1 {
+					// 2 -> 1
+					n2 := g.GetNode(pattern2)
+					n1 := g.GetNode(pattern1)
+					g.AddEdge(n2, n1)
+				}
+			}
+		}
+	}
+
+	return g, nil
 }

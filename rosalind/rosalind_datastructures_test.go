@@ -40,8 +40,14 @@ func fillGraph() DirGraph {
 	return g
 }
 
-func TestDirGraph(t *testing.T) {
+func TestDatastructureDirGraph(t *testing.T) {
 	g := fillGraph()
 	s := g.String()
-	fmt.Println(s)
+	gold := "AGGCA -> GGCAT\nCATGC -> ATGCG\nGCATG -> CATGC\nGGCAT -> GCATG"
+	if s != gold {
+		msg := "Error: DirGraph data structure did not print properly\n"
+		msg += fmt.Sprintf("computed:\n%v\n\n", s)
+		msg += fmt.Sprintf("gold:\n%v\n\n", gold)
+		t.Error(msg)
+	}
 }
