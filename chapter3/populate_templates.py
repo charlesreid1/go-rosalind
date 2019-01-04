@@ -14,13 +14,13 @@ def main():
             'description': 'Given an input string, generate a list of all kmers that are in the input string.',
             'url': 'http://rosalind.info/problems/ba3a/'
         },
-        #{
-        #    'chapter': '2',
-        #    'problem': 'b',
-        #    'title': 'Find a Median String',
-        #    'description': 'Given a kmer length k and a set of strings of DNA, find the kmer(s) that minimize the L1 norm of the distance from it to all other DNA strings.',
-        #    'url': 'http://rosalind.info/problems/ba2b/'
-        #},
+        {
+            'chapter': '3',
+            'problem': 'b',
+            'title': 'Reconstruct string from genome path',
+            'description': 'Reconstruct a string from its genome path, i.e., sequential fragments of overlapping DNA.',
+            'url': 'http://rosalind.info/problems/ba3b/'
+        },
         #{
         #    'chapter': '2',
         #    'problem': 'c',
