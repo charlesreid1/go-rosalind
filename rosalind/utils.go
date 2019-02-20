@@ -2,8 +2,11 @@ package rosalind
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
 
 // ReadLines reads a whole file into memory
@@ -43,6 +46,46 @@ func WriteLines(lines []string, path string) error {
 		fmt.Fprintln(w, line)
 	}
 	return w.Flush()
+}
+
+// ReadMatrix takes a set of lines containing a
+// multidimensional array of floating point values,
+// k elements per line, n lines, and returns a
+// slice of slices with size slice[k][n]
+// and with type float32.
+func ReadMatrix32(lines []string, k int) ([][]float32, error) {
+
+	separator := " " // change to , or whatever separator
+	nLines := len(lines)
+
+	// Return a multidimensional slice of floats.
+	// To make multidimensional slice,
+	// make a slice, then loop and make more slices
+	result := make([][]float32, nLines)
+	for i := 0; i < nLines; i++ {
+
+		// Make space for this row of values
+		result[i] = make([]float32, k)
+
+		// Split row string into tokens
+		tokens := strings.Split(lines[i], separator)
+		if len(tokens) != k {
+			msg := fmt.Sprintf("Error: length of line %d was %d, should be %d", i+1, len(tokens), k)
+			return nil, errors.New(msg)
+		}
+		for j, token := range tokens {
+			// Convert each token to a float64,
+			// then to a float32.
+			// https://golang.org/pkg/strconv/#ParseFloat
+			f, err := strconv.ParseFloat(token, 32)
+			if err != nil {
+				return nil, err
+			}
+			result[i][j] = float32(f)
+		}
+	}
+	return result, nil
+
 }
 
 // Utility function: check if two string arrays/array slices
