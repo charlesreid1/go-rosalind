@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
@@ -49,5 +50,5 @@ func BA2c(filename string) {
 
 	// Find the most probable kmer
 	result, _ := rosa.ProfileMostProbableKmers(dna, k, profile)
-	fmt.Println(result)
+	fmt.Println(strings.Join(result, " "))
 }
