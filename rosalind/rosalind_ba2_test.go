@@ -286,3 +286,64 @@ func TestMedianString(t *testing.T) {
 		t.Error(msg)
 	}
 }
+
+/////////////////////////////////
+// BA2c Test
+
+func TestProfileMostProbableKmers(t *testing.T) {
+	gold := "CCGAG"
+	dna := "ACCTGTTTATTGCCTAAGTTCCGAACAAACCCAATATAGCCCGAGGGCCT"
+	k := 5
+	prof := [][]float32{
+		[]float32{0.2, 0.2, 0.3, 0.2, 0.3},
+		[]float32{0.4, 0.3, 0.1, 0.5, 0.1},
+		[]float32{0.3, 0.3, 0.5, 0.2, 0.4},
+		[]float32{0.1, 0.2, 0.1, 0.1, 0.2},
+	}
+	result, _ := ProfileMostProbableKmers(dna, k, prof)
+
+	// Check if gold answer is in our results slice
+	var passed_test bool
+	for _, r := range result {
+		if r == gold {
+			passed_test = true
+			break
+		}
+	}
+
+	if !passed_test {
+		// The correct kmer was not found in our result
+		msg := fmt.Sprintf("Error testing ProfileMostProbableKmer(): found incorrect most probable kmer:\n    Gold: %s\n    Computed: %s\n",
+			gold, strings.Join(result, " "))
+		t.Error(msg)
+	}
+}
+
+func TestProfileMostProbableKmers2(t *testing.T) {
+	gold := "TGTCGC"
+	dna := "TGCCCGAGCTATCTTATGCGCATCGCATGCGGACCCTTCCCTAGGCTTGTCGCAAGCCATTATCCTGGGCGCTAGTTGCGCGAGTATTGTCAGACCTGATGACGCTGTAAGCTAGCGTGTTCAGCGGCGCGCAATGAGCGGTTTAGATCACAGAATCCTTTGGCGTATTCCTATCCGTTACATCACCTTCCTCACCCCTA"
+	k := 6
+	prof := [][]float32{
+		[]float32{0.364, 0.333, 0.303, 0.212, 0.121, 0.242},
+		[]float32{0.182, 0.182, 0.212, 0.303, 0.182, 0.303},
+		[]float32{0.121, 0.303, 0.182, 0.273, 0.333, 0.303},
+		[]float32{0.333, 0.182, 0.303, 0.212, 0.364, 0.152},
+	}
+	result, _ := ProfileMostProbableKmers(dna, k, prof)
+
+	// Check if gold answer is in our results slice
+	var passed_test bool
+	for _, r := range result {
+		if r == gold {
+			passed_test = true
+			break
+		}
+	}
+
+	if !passed_test {
+		// The correct kmer was not found in our result
+		msg := fmt.Sprintf("Error testing ProfileMostProbableKmer(): found incorrect most probable kmer:\n    Gold: %s\n    Computed: %s\n",
+			gold, strings.Join(result, " "))
+		t.Error(msg)
+	}
+}
