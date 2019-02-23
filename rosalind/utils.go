@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -131,6 +132,16 @@ func EqualIntSlices(a, b []int) bool {
 		}
 	}
 	return true
+}
+
+// Check if two floats are equal, to within
+// some small tolerance.
+func TheseFloatsAreEqual(a, b float32) bool {
+	if math.Abs(float64(b-a)) < 1.0e-6 {
+		return true
+	} else {
+		return false
+	}
 }
 
 // Compute the factorial of an integer.
