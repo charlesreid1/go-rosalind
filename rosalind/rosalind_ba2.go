@@ -477,7 +477,7 @@ type ScoredMotifMatrix struct {
 func NewScoredMotifMatrix() ScoredMotifMatrix {
 	var s ScoredMotifMatrix
 	s.motifs = []string{}
-	s.score = 0
+	s.score = -1
 	return s
 }
 
@@ -607,17 +607,15 @@ func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
 // Given an integer k (kmer size) and t (len(dna)),
 // return a collection of kmer strings
 // that have the lowest score (highest similarity).
-//
 // If at any step you find more than one
 // Profile-most probable k-mer in a given
 // DNA string, use the one occurring first.
-//
 func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
 
-	var best_smg ScoredMotifMatrix
+	var best_smm ScoredMotifMatrix
 
 	// bestmotifs is initially an empty list with score 0
-	best_smg = NewScoredMotifMatrix()
+	best_smm = NewScoredMotifMatrix()
 
 	// Loop over all motifs for d = 0,
 	// which is equivalent to the
@@ -626,49 +624,40 @@ func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
 	for kmer_motif, _ := range hist {
 
 		// Create a new scored motif group
-		this_smg := NewScoredMotifMatrix()
+		this_smm := NewScoredMotifMatrix()
 
 		// Add our motif, which we chose from dna[0]
 		// This motif kicks off the new motif group
-		this_smg.AddMotif(kmer_motif)
-		fmt.Printf("Added kmer motif: %s\n", kmer_motif)
+		this_smm.AddMotif(kmer_motif)
 
 		// Loop over all remaining dna strings
 		for i := 1; i < len(dna); i++ {
 
 			idna := dna[i]
 
-			fmt.Printf("Added kmer motif: %s\n", kmer_motif)
-
 			// Form a profile matrix from
 			// all the motifs from dna strings
 			// up to, but not including, this one
-			profile, _ := this_smg.MakeProfile()
+			profile, _ := this_smm.MakeProfile()
 
 			// Use the profile to find the profile-most
 			// probable kmer in this string of dna, idna
-			result, _ := ProfileMostProbableKmers(idna, k, profile)
+			result, _ := ProfileMostProbableKmersGreedy(idna, k, profile)
 
+			// Add the profile-most probable kmer
+			// to the list of motifs
 			if len(result) > 0 {
-				fmt.Println("----------")
-				fmt.Println("profile most probable kmers returned:")
-				fmt.Println(result[0])
-				this_smg.AddMotif(result[0])
-			}
-
-			//this_smg.AddMotif("") //result[0])
-			if false {
-				fmt.Println(result)
+				this_smm.AddMotif(result)
 			}
 		}
 
-		this_smg.UpdateScore()
-		if this_smg.score > best_smg.score {
-			best_smg = this_smg
+		this_smm.UpdateScore()
+		if this_smm.score < best_smm.score || best_smm.score < 0 {
+			best_smm = this_smm
 		}
 	}
 
-	return best_smg.motifs, nil
+	return best_smm.motifs, nil
 
 	/*
 		for each kmer in the first dna string:
@@ -735,17 +724,5 @@ func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
 		   	    if Score(Motifs) < Score(BestMotifs)
 		   	        BestMotifs ← Motifs
 		   	return BestMotifs
-	*/
-	/*
-		GreedyMotifSearch(k,t,Dna)
-			bestMotifs ← empty list (score of 0)
-			for i from 0 to |Dna[0]| - k
-				motifs ← list with only Dna[0](i,k)
-				for j from 1 to |Dna| - 1
-					Add ProfileMostProbableKmer( Dna[j], k, Profile(motifs) )
-					to motifs
-				if score(motifs) < score(bestMotifs)
-					bestMotifs = motifs
-			return bestMotifs
 	*/
 }

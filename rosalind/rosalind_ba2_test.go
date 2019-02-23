@@ -515,28 +515,31 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	// of the BA2D example.
 	motif := "GGC"
 
+	// Define kmer motif length
+	k := len(motif)
+
+	// This is the profile-most probable kmer that should be found
+	gold1 := "AAG"
+
+	// These are the motifs that should be in the ScoredMotifMatrix
+	gold_motifs1 := []string{"GGC", "AAG"}
+
 	// This DNA string is the second DNA string, so the first one
 	// that we extract possible motifs from in the inner iteration
 	// of the greedy motif finding function.
 	dna1 := "AAGAATCAGTCA"
 
-	// Define kmer motif length
-	k := len(motif)
-
-	// This is the profile-most probable kmer that should be found
-	gold := "AAG"
-
-	// These are the motifs that should be in the ScoredMotifMatrix
-	gold_motifs := []string{"GGC", "AAG"}
-
 	// Create a ScoredMotifMatrix to create a profile matrix
 	s := NewScoredMotifMatrix()
 
-	// Create a profile matrix
+	// Add the original motif
 	s.AddMotif(motif)
+
+	// Create a profile matrix
 	profile, err := s.MakeProfile()
 	if err != nil {
-		t.Error(err)
+		msg := "Error: MakeProfile() call failed"
+		t.Error(msg)
 	}
 
 	// Use the profile and the input DNA string to find the
@@ -547,19 +550,19 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	s.AddMotif(result)
 
 	// First, check that we found the correct
-	// profile-msot probable kmers
-	if result != gold {
+	// profile-most probable kmers
+	if result != gold1 {
 		msg := fmt.Sprintf("Error: ProfileMostProbableKmers failed:\n    Computed profile-most probable kmer: %s\n    Gold profile-most probable kmer: %s\n    DNA string: %s\n    k: %d\n    profile: %v\n\n",
-			result, gold, dna1, k, profile)
+			result, gold1, dna1, k, profile)
 		t.Error(msg)
 	}
 
 	// Second, check the ScoredMotifMatrix motifs
 	var passed_test bool
 	passed_test = true
-	if len(s.motifs) == len(gold_motifs) {
+	if len(s.motifs) == len(gold_motifs1) {
 		for i := 0; i < len(s.motifs); i++ {
-			if s.motifs[i] != gold_motifs[i] {
+			if s.motifs[i] != gold_motifs1[i] {
 				passed_test = false
 				break
 			}
@@ -567,23 +570,71 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	} else {
 		passed_test = false
 	}
-
 	if !passed_test {
 		msg := fmt.Sprintf("Error testing greedy motif first inner iteration: the ScoredMotifMatrix motifs array was not correct.\n    Computed: %s\n    Gold: %s",
 			strings.Join(s.motifs, " "),
-			strings.Join(gold_motifs, " "))
+			strings.Join(gold_motifs1, " "))
 		t.Error(msg)
 	}
 
+	// One more
+	dna2 := "CAAGGAGTTCGC"
+
+	// This is the profile-most probable kmer that should be found
+	gold2 := "AAG"
+
+	// These are the motifs that should be in the ScoredMotifMatrix
+	gold_motifs2 := []string{"GGC", "AAG", "AAG"}
+
+	// Create a profile matrix
+	profile, err = s.MakeProfile()
+	if err != nil {
+		msg := "Error: MakeProfile() call failed"
+		t.Error(msg)
+	}
+
+	// Use the profile and the input DNA string to find the
+	// most probable kmer, greedy style.
+	result, err = ProfileMostProbableKmersGreedy(dna2, k, profile)
+	if err != nil {
+		msg := "Error: ProfileMostProbableKmersGreedy() call failed"
+		t.Error(msg)
+	}
+
+	// Add the most probable kmer to the motifs
+	s.AddMotif(result)
+
+	// First, check that we found the correct
+	// profile-most probable kmers
+	if result != gold2 {
+		msg := fmt.Sprintf("Error: ProfileMostProbableKmers failed:\n    Computed profile-most probable kmer: %s\n    Gold profile-most probable kmer: %s\n    DNA string: %s\n    k: %d\n    profile: %v\n\n",
+			result, gold2, dna2, k, profile)
+		t.Error(msg)
+	}
+
+	// Second, check the ScoredMotifMatrix motifs
+	passed_test = true
+	if len(s.motifs) == len(gold_motifs2) {
+		for i := 0; i < len(s.motifs); i++ {
+			if s.motifs[i] != gold_motifs2[i] {
+				passed_test = false
+				break
+			}
+		}
+	} else {
+		passed_test = false
+	}
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing greedy motif first inner iteration: the ScoredMotifMatrix motifs array was not correct.\n    Computed: %s\n    Gold: %s",
+			strings.Join(s.motifs, " "),
+			strings.Join(gold_motifs2, " "))
+		t.Error(msg)
+	}
 }
 
 // Test out the greedy motif search...
-/*
 func TestGreedyMotifSearch(t *testing.T) {
-	gold := []string{
-		"CAG", "CAG",
-		"CAA", "CAA", "CAA",
-	}
+	gold := []string{"CAG", "CAG", "CAA", "CAA", "CAA"}
 	k_in := 3
 	t_in := 5
 	dna := []string{
@@ -620,4 +671,3 @@ func TestGreedyMotifSearch(t *testing.T) {
 		t.Error(msg)
 	}
 }
-*/
