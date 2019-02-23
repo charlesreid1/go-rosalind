@@ -59,7 +59,7 @@ func BA2d(filename string) {
 		dna[iA] = lines[iL]
 	}
 
-	result := rosa.GreedyMotifSearch(dna, k, t)
+	result, _ := rosa.GreedyMotifSearch(dna, k, t)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
