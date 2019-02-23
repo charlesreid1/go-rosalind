@@ -28,6 +28,13 @@ def main():
             'description': 'Given a profile matrix, find the most probable k-mer to generate the given DNA string.',
             'url': 'http://rosalind.info/problems/ba2c/'
         },
+        {
+            'chapter': '2',
+            'problem': 'd',
+            'title': 'Implement GreedyMotifSearch',
+            'description': 'Find a collection of motif strings using a greedy motif search. Return first-occurring profile-most probable kmer.',
+            'url': 'http://rosalind.info/problems/ba2d/'
+        },
     ]
     
     print("Writing problem boilerplate code")

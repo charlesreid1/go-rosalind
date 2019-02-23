@@ -3,6 +3,7 @@ package rosalind
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 ////////////////////////////////
@@ -310,7 +311,7 @@ func indexOfString(list []string, item string) int {
 // counting up the probability of
 // which nucleotide occurred.
 
-func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string, error) {
+func ProfileMostProbableKmers(dna string, k int, profile [][]float32, greedy bool) ([]string, error) {
 
 	nucleotides := []string{"A", "C", "G", "T"}
 
@@ -353,10 +354,311 @@ func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string,
 		if probability > max_prob {
 			max_prob = probability
 			max_prob_kmer = []string{kmer}
-		} else if probability == max_prob {
+		} else if probability == max_prob && !greedy {
 			max_prob_kmer = append(max_prob_kmer, kmer)
 		}
 	}
 
+	if greedy && len(max_prob_kmer) > 1 {
+		msg := fmt.Sprintf("Error: incorrect number of profile-most probable kmers. Greedy mode should return 1, but found %d",
+			len(max_prob_kmer))
+		return nil, errors.New(msg)
+	}
+
 	return max_prob_kmer, nil
+}
+
+////////////////////////////////
+// BA2D
+//
+// This problem makes about as much sense
+// as a camel in a jacuzzi.
+//
+// After much searching, and re-reading,
+// found this great explanation:
+//
+// http://www.mrgraeme.co.uk/greedy-motif-search/
+
+// ----------------------------
+// Scored Motif Matrix struct
+
+// Create a struct to hold a set of motifs (kmers)
+// and their associated score. We continually assemble
+// many of these possible sets of motifs, checking to
+// find a set of motifs with a minimum score.
+// The score is not updated dyanmically, see UpdateScore().
+type ScoredMotifMatrix struct {
+	motifs []string
+	score  int
+}
+
+// Constructor
+func NewScoredMotifMatrix() ScoredMotifMatrix {
+	var s ScoredMotifMatrix
+	s.motifs = []string{}
+	s.score = 0
+	return s
+}
+
+// Add a motif to the motif matrix
+func (s *ScoredMotifMatrix) AddMotif(motif string) error {
+	if len(s.motifs) > 0 {
+		if len(motif) != len(s.motifs[0]) {
+			msg := fmt.Sprintf("Error: could not add motif %s: length %d does not match existing motif length %d",
+				motif, len(motif), len(s.motifs[0]))
+			return errors.New(msg)
+		}
+	}
+	s.motifs = append(s.motifs, motif)
+	return nil
+}
+
+// Update the value of the score of a ScoredMotifMatrix.
+// This assembles a kmer composed of the most common
+// nucleotide per position, then computes the sum of
+// the Hamming distances from that kmer for all motifs.
+func (s *ScoredMotifMatrix) UpdateScore() error {
+
+	// Params
+	t := len(s.motifs)
+	k := len(s.motifs[0])
+
+	// Start by assembling a "most common"
+	// mer - the kmer containing the most
+	// probable nucleotide at each position.
+	most_common_kmer := make([]string, k)
+
+	// Loop over every nucleotide
+	for ik := 0; ik < k; ik++ {
+
+		// Determine most common nucleotide
+		// using a map to count frequencies
+		frequency := make(map[string]int)
+
+		// Loop over every DNA string,
+		// count nucleotide frequencies
+		for it := 0; it < t; it++ {
+			bp := string(s.motifs[it][ik])
+			frequency[bp] += 1
+		}
+
+		// Determine most frequent nucleotide
+		var max_bp string
+		var max_freq int
+		max_freq = 0
+		for ibp, ibp_freq := range frequency {
+			if ibp_freq > max_freq {
+				// Set new maximum occurring base pair
+				max_freq = ibp_freq
+				max_bp = ibp
+			}
+		}
+		most_common_kmer[ik] = max_bp
+	}
+
+	commonkmer := strings.Join(most_common_kmer, "")
+
+	// Now that we have the common kmer,
+	// we can compute the score of each motif,
+	// and sum their scores to get the total score.
+	s.score = 0
+	for it := 0; it < t; it++ {
+		d, _ := HammingDistance(commonkmer, s.motifs[it])
+		s.score += d
+	}
+
+	// Done
+	return nil
+}
+
+func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
+	// Params
+	t := len(s.motifs)
+	k := len(s.motifs[0])
+	nucleotides := []string{"A", "C", "G", "T"}
+
+	// Profile is a 4 x k matrix of float32s
+	profile := make([][]float32, 4)
+	for jj := 0; jj < 4; jj++ {
+		profile[jj] = make([]float32, k)
+	}
+
+	// For each column, i.e. kmer nucleotide location,
+	// compute the probability
+	// of each of the four nucleotides
+	//
+	// P_i = N_i / sum_j N_j
+	//
+	for ik := 0; ik < k; ik++ {
+		counts := map[string]int{
+			"A": 0,
+			"C": 0,
+			"G": 0,
+			"T": 0,
+		}
+
+		// Populate counts
+		for it := 0; it < t; it++ {
+			nucleotide := string(s.motifs[it][ik])
+			counts[nucleotide] += 1
+		}
+
+		// Sum all values
+		summ := 0
+		for _, nuc := range nucleotides {
+			summ += counts[nuc]
+		}
+
+		// Populate p_i
+		for inuc, nuc := range nucleotides {
+			val := float32(counts[nuc])
+			val /= float32(summ)
+			profile[inuc][ik] = val
+		}
+	}
+
+	return profile, nil
+}
+
+// ----------------------------
+// BA2D functions
+
+// Given an integer k (kmer size) and t (len(dna)),
+// return a collection of kmer strings
+// that have the lowest score (highest similarity).
+//
+// If at any step you find more than one
+// Profile-most probable k-mer in a given
+// DNA string, use the one occurring first.
+//
+func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
+
+	var best_smg ScoredMotifMatrix
+
+	// bestmotifs is initially an empty list with score 0
+	best_smg = NewScoredMotifMatrix()
+
+	// Loop over all motifs for d = 0,
+	// which is equivalent to the
+	// keys in the kmer frequencies map
+	hist, _ := KmerHistogram(dna[0], k)
+	for kmer_motif, _ := range hist {
+
+		// Create a new scored motif group
+		this_smg := NewScoredMotifMatrix()
+
+		// Add our motif, which we chose from dna[0]
+		// This motif kicks off the new motif group
+		this_smg.AddMotif(kmer_motif)
+
+		// Loop over all remaining dna strings
+		for _, idna := range dna {
+
+			// Form a profile matrix from
+			// all the motifs from dna strings
+			// up to, but not including, this one
+			profile, _ := this_smg.MakeProfile()
+			fmt.Println(profile)
+
+			// Use the profile to find the profile-most
+			// probable kmer in this string of dna, idna
+			result, _ := ProfileMostProbableKmers(idna, k, profile, true)
+			//if len(result) == 0 {
+			//	fmt.Println("----------")
+			//	fmt.Println(idna)
+			//	fmt.Println(profile)
+			//}
+
+			//this_smg.AddMotif("") //result[0])
+			if false {
+				fmt.Println(result)
+			}
+		}
+
+		this_smg.UpdateScore()
+		if this_smg.score > best_smg.score {
+			best_smg = this_smg
+		}
+	}
+
+	return best_smg.motifs, nil
+
+	/*
+		for each kmer in the first dna string:
+
+			// examining this kmer
+			for each remaining dna string:
+				form profile from all dna strings up to this one
+				find profile-most probable kmer
+
+			// the motifs you found are each
+			// the (first) most probable kmers
+
+			// create a score for that motif:
+			//  - find most common nucleotide, per position
+			//  - compute number of differences from that nucleotide
+
+
+	*/
+	/*
+		If the motifs are the following:
+
+		GTTCAGGCA
+		AATCAGTCA
+		CGAGTTCGC
+		GTCAATCAC
+		TAATATTCG
+		Score = 7
+
+		The consensus string (most common) is AAG.
+		The score is the number of differences
+		from that string.
+
+		You get AAG from checking each character
+		from the 5 kmers.
+
+		Position 0 has G, A, A, C, C [A most common]
+		Position 1 has G, A, A, A, A [A most common]
+		Position 2 has C, G, G, C, A [G most common]
+		.: AAG
+
+		GGC - AAG: 3 differences
+		AAG - AAG: 0 differences
+		AAG - AAG: 0 differences
+		CAC - AAG: 2 differences
+		CAA - AAG: 2 differences
+
+		7 differences total
+
+	*/
+
+	/*
+		GREEDYMOTIFSEARCH(Dna, k, t):
+		   	BestMotifs ← motif matrix formed by first
+						  k-mers in each string
+		   	              from Dna
+		   	for each k-mer Motif in the first string from Dna
+		   	    Motif1 ← Motif
+		   	    for i = 2 to t
+		   	        form Profile from motifs Motif1, …, Motifi - 1
+		   	        Motifi ← Profile-most probable
+								k-mer in the i-th i
+								string in Dna
+		   	    Motifs ← (Motif1, …, Motift)
+		   	    if Score(Motifs) < Score(BestMotifs)
+		   	        BestMotifs ← Motifs
+		   	return BestMotifs
+	*/
+	/*
+		GreedyMotifSearch(k,t,Dna)
+			bestMotifs ← empty list (score of 0)
+			for i from 0 to |Dna[0]| - k
+				motifs ← list with only Dna[0](i,k)
+				for j from 1 to |Dna| - 1
+					Add ProfileMostProbableKmer( Dna[j], k, Profile(motifs) )
+					to motifs
+				if score(motifs) < score(bestMotifs)
+					bestMotifs = motifs
+			return bestMotifs
+	*/
 }
