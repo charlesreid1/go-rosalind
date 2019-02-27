@@ -552,7 +552,7 @@ func (s *ScoredMotifMatrix) UpdateScore() error {
 	return nil
 }
 
-func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
+func (s *ScoredMotifMatrix) MakeProfile(pseudocounts bool) ([][]float32, error) {
 	// Params
 	t := len(s.motifs)
 	k := len(s.motifs[0])
@@ -584,6 +584,22 @@ func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
 			counts[nucleotide] += 1
 		}
 
+		if pseudocounts {
+			found_zero := false
+			for _, nuc := range nucleotides {
+				count := counts[nuc]
+				if count == 0 {
+					found_zero = true
+					break
+				}
+			}
+			if found_zero {
+				for _, nuc := range nucleotides {
+					counts[nuc] += 1
+				}
+			}
+		}
+
 		// Sum all values
 		summ := 0
 		for _, nuc := range nucleotides {
@@ -603,6 +619,10 @@ func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
 
 // ----------------------------
 // BA2D functions
+//
+// Note: the function below is for
+// BA2D and BA2E, depending on the
+// value of the boolean.
 
 // Given an integer k (kmer size) and t (len(dna)),
 // return a collection of kmer strings
@@ -610,7 +630,8 @@ func (s *ScoredMotifMatrix) MakeProfile() ([][]float32, error) {
 // If at any step you find more than one
 // Profile-most probable k-mer in a given
 // DNA string, use the one occurring first.
-func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
+// Boolean pseudocounts turns on/off pseudocounts.
+func GreedyMotifSearch(dna []string, k, t int, pseudocounts bool) ([]string, error) {
 
 	var best_smm ScoredMotifMatrix
 
@@ -638,7 +659,7 @@ func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
 			// Form a profile matrix from
 			// all the motifs from dna strings
 			// up to, but not including, this one
-			profile, _ := this_smm.MakeProfile()
+			profile, _ := this_smm.MakeProfile(pseudocounts)
 
 			// Use the profile to find the profile-most
 			// probable kmer in this string of dna, idna
@@ -725,4 +746,17 @@ func GreedyMotifSearch(dna []string, k, t int) ([]string, error) {
 		   	        BestMotifs ← Motifs
 		   	return BestMotifs
 	*/
+}
+
+// Run a greedy motif search using regular counts.
+func GreedyMotifSearchNoPseudocounts(dna []string, k, t int) ([]string, error) {
+	return GreedyMotifSearch(dna, k, t, false)
+}
+
+// ----------------------------
+// BA2E functions
+
+// Run a greedy motif search using pseudocounts.
+func GreedyMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
+	return GreedyMotifSearch(dna, k, t, true)
 }
