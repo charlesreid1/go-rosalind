@@ -35,6 +35,13 @@ def main():
             'description': 'Find a collection of motif strings using a greedy motif search. Return first-occurring profile-most probable kmer.',
             'url': 'http://rosalind.info/problems/ba2d/'
         },
+        {
+            'chapter': '2',
+            'problem': 'e',
+            'title': 'Implement GreedyMotifSearch with Pseudocounts',
+            'description': 'Re-implement problem BA2d (greedy motif search) using pseudocounts, which avoid setting probabilities to an absolute value of zero.',
+            'url': 'http://rosalind.info/problems/ba2e/'
+        },
     ]
     
     print("Writing problem boilerplate code")

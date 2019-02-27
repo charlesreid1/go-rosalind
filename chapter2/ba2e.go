@@ -10,16 +10,16 @@ import (
 )
 
 // Print problem description for Rosalind.info
-// Problem BA2d: Implement GreedyMotifSearch
-func BA2dDescription() {
+// Problem BA2e: Implement GreedyMotifSearch with Pseudocounts
+func BA2eDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA2d:",
-		"Implement GreedyMotifSearch",
+		"Rosalind: Problem BA2e:",
+		"Implement GreedyMotifSearch with Pseudocounts",
 		"",
-		"Find a collection of motif strings using a greedy motif search. Return first-occurring profile-most probable kmer.",
+		"Re-implement problem BA2d (greedy motif search) using pseudocounts, which avoid setting probabilities to an absolute value of zero.",
 		"",
-		"URL: http://rosalind.info/problems/ba2d/",
+		"URL: http://rosalind.info/problems/ba2e/",
 		"",
 	}
 	for _, line := range description {
@@ -28,9 +28,9 @@ func BA2dDescription() {
 }
 
 // Run the problem
-func BA2d(filename string) {
+func BA2e(filename string) {
 
-	BA2dDescription()
+	BA2eDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -59,7 +59,7 @@ func BA2d(filename string) {
 		dna[iA] = lines[iL]
 	}
 
-	result, _ := rosa.GreedyMotifSearchNoPseudocounts(dna, k, t)
+	result, _ := rosa.GreedyMotifSearchPseudocounts(dna, k, t)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)

@@ -471,7 +471,7 @@ func TestProfileConstruction(t *testing.T) {
 		smg.AddMotif(motif)
 	}
 
-	result, err := smg.MakeProfile()
+	result, err := smg.MakeProfile(false)
 	if err != nil {
 		t.Error(err)
 	}
@@ -536,9 +536,9 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	s.AddMotif(motif)
 
 	// Create a profile matrix
-	profile, err := s.MakeProfile()
+	profile, err := s.MakeProfile(false)
 	if err != nil {
-		msg := "Error: MakeProfile() call failed"
+		msg := "Error: MakeProfile(false) call failed"
 		t.Error(msg)
 	}
 
@@ -587,9 +587,9 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	gold_motifs2 := []string{"GGC", "AAG", "AAG"}
 
 	// Create a profile matrix
-	profile, err = s.MakeProfile()
+	profile, err = s.MakeProfile(false)
 	if err != nil {
-		msg := "Error: MakeProfile() call failed"
+		msg := "Error: MakeProfile(false) call failed"
 		t.Error(msg)
 	}
 
@@ -632,7 +632,7 @@ func TestGreedyMotifFirstInnerIteration(t *testing.T) {
 	}
 }
 
-// Test out the greedy motif search...
+// Test out the greedy motif search with regular counts.
 func TestGreedyMotifSearch(t *testing.T) {
 	gold := []string{"CAG", "CAG", "CAA", "CAA", "CAA"}
 	k_in := 3
@@ -645,7 +645,7 @@ func TestGreedyMotifSearch(t *testing.T) {
 		"CAATAATATTCG",
 	}
 
-	result, err := GreedyMotifSearch(dna, k_in, t_in)
+	result, err := GreedyMotifSearchNoPseudocounts(dna, k_in, t_in)
 	if err != nil {
 		t.Error(err)
 	}
@@ -666,6 +666,46 @@ func TestGreedyMotifSearch(t *testing.T) {
 
 	if !passed_test {
 		msg := fmt.Sprintf("Error testing GreedyMotifSearch(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
+			strings.Join(gold, " "),
+			strings.Join(result, " "))
+		t.Error(msg)
+	}
+}
+
+// Test out the greedy motif search with pseudocounts
+func TestGreedyMotifSearchPseudocounts(t *testing.T) {
+	gold := []string{"TTC", "ATC", "TTC", "ATC", "TTC"}
+	k_in := 3
+	t_in := 5
+	dna := []string{
+		"GGCGTTCAGGCA",
+		"AAGAATCAGTCA",
+		"CAAGGAGTTCGC",
+		"CACGTCAATCAC",
+		"CAATAATATTCG",
+	}
+
+	result, err := GreedyMotifSearchPseudocounts(dna, k_in, t_in)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Element-wise comparison of gold and computed result
+	var passed_test bool
+	passed_test = true
+	if len(gold) == len(result) {
+		for i := 0; i < len(result); i++ {
+			if result[i] != gold[i] {
+				passed_test = false
+				break
+			}
+		}
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing GreedyMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
 			strings.Join(gold, " "),
 			strings.Join(result, " "))
 		t.Error(msg)
