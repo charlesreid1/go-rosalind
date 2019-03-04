@@ -367,6 +367,9 @@ func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string,
 	return max_prob_kmer, nil
 }
 
+// Return a list of kmers of length k that occur in a DNA string.
+// This list preserves order in which the kmers appear in DNA.
+// This list does not include duplicates.
 func KmerInOrderList(dna string, k int) ([]string, error) {
 
 	// Ensure we have well-formed inputs
@@ -638,11 +641,21 @@ func GreedyMotifSearch(dna []string, k, t int, pseudocounts bool) ([]string, err
 	// bestmotifs is initially an empty list with score 0
 	best_smm = NewScoredMotifMatrix()
 
-	// Loop over all motifs for d = 0,
-	// which is equivalent to the
-	// keys in the kmer frequencies map
-	hist, _ := KmerHistogram(dna[0], k)
-	for kmer_motif, _ := range hist {
+	// One way of getting kmer motifs
+	// is to create a hash table of all
+	// motifs that occur in the DNA string.
+	// This does not maintain the original
+	// order in which the motifs occur.
+	// To be *greedy* we should pay attention
+	// to which one comes first.
+	motifs, err := KmerInOrderList(dna[0], k)
+	if err != nil {
+		msg := fmt.Sprintf("Error: call to KmerInOrderList() failed with params:\n\tdna = %s\n\tk = %d",
+			dna[0], k)
+		return nil, errors.New(msg)
+	}
+
+	for _, kmer_motif := range motifs {
 
 		// Create a new scored motif group
 		this_smm := NewScoredMotifMatrix()
