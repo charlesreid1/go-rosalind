@@ -176,3 +176,20 @@ func Binomial(n, k int) int {
 
 	return result
 }
+
+// Do this because otherwise we use
+// math.Max() which requires us to do
+// int -> float -> int
+func minint(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func maxint(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}

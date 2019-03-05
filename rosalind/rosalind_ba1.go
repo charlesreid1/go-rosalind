@@ -472,12 +472,7 @@ func HammingDistance(p, q string) (int, error) {
 	}
 
 	// Get longest length common to both
-	var m int
-	if len(p) > len(q) {
-		m = len(q)
-	} else {
-		m = len(p)
-	}
+	m := maxint(len(p), len(q))
 
 	// Accumulate distance
 	dist := 0
