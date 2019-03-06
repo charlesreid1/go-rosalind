@@ -39,7 +39,7 @@ func BA2e(filename string) {
 		log.Fatalf("rosa.ReadLines: %v", err)
 	}
 
-	//// Input file contents
+	// Input file contents
 	params := strings.Split(lines[0], " ")
 	k, _ := strconv.Atoi(params[0])
 	t, _ := strconv.Atoi(params[1])
