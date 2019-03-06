@@ -42,6 +42,20 @@ def main():
             'description': 'Re-implement problem BA2d (greedy motif search) using pseudocounts, which avoid setting probabilities to an absolute value of zero.',
             'url': 'http://rosalind.info/problems/ba2e/'
         },
+        {
+            'chapter': '2',
+            'problem': 'f',
+            'title': 'Implement RandomizedMotifSearch with Pseudocounts',
+            'description': 'Re-implement problem BA2e (greedy motif search with pseudocounts) but use a random, instead of greedy, algorithm to pick motif kmers from each DNA string.',
+            'url': 'http://rosalind.info/problems/ba2f/'
+        },
+        {
+            'chapter': '2',
+            'problem': 'g',
+            'title': 'Implement GibbsSampler',
+            'description': 'Generate probabilities of each kmer in a DNA string using its profile. Use these to assemble a list of probabilities. Use these probabilities to create a random number generator. (Probability of that pattern given the Profile, Pr(Pattern|Profile), to generate n probabilities.) GibbsSampler uses this random number generator to generate a random k-mer.',
+            'url': 'http://rosalind.info/problems/ba2f/'
+        },
     ]
     
     print("Writing problem boilerplate code")
