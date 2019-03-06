@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"sort"
 	"strings"
+	"time"
 )
 
 ////////////////////////////////
@@ -622,11 +624,11 @@ func (s *ScoredMotifMatrix) MakeProfile(pseudocounts bool) ([][]float32, error) 
 }
 
 // ----------------------------
-// BA2D functions
+// BA2D and BA2E functions
 //
 // Note: the function below is for
 // BA2D and BA2E, depending on the
-// value of the boolean.
+// value of the pseudocounts boolean.
 
 // Given an integer k (kmer size) and t (len(dna)),
 // return a collection of kmer strings
@@ -693,74 +695,10 @@ func GreedyMotifSearch(dna []string, k, t int, pseudocounts bool) ([]string, err
 	}
 
 	return best_smm.motifs, nil
-
-	/*
-		for each kmer in the first dna string:
-
-			// examining this kmer
-			for each remaining dna string:
-				form profile from all dna strings up to this one
-				find profile-most probable kmer
-
-			// the motifs you found are each
-			// the (first) most probable kmers
-
-			// create a score for that motif:
-			//  - find most common nucleotide, per position
-			//  - compute number of differences from that nucleotide
-
-
-	*/
-	/*
-		If the motifs are the following:
-
-		GTTCAGGCA
-		AATCAGTCA
-		CGAGTTCGC
-		GTCAATCAC
-		TAATATTCG
-		Score = 7
-
-		The consensus string (most common) is AAG.
-		The score is the number of differences
-		from that string.
-
-		You get AAG from checking each character
-		from the 5 kmers.
-
-		Position 0 has G, A, A, C, C [A most common]
-		Position 1 has G, A, A, A, A [A most common]
-		Position 2 has C, G, G, C, A [G most common]
-		.: AAG
-
-		GGC - AAG: 3 differences
-		AAG - AAG: 0 differences
-		AAG - AAG: 0 differences
-		CAC - AAG: 2 differences
-		CAA - AAG: 2 differences
-
-		7 differences total
-
-	*/
-
-	/*
-		GREEDYMOTIFSEARCH(Dna, k, t):
-		   	BestMotifs ← motif matrix formed by first
-						  k-mers in each string
-		   	              from Dna
-		   	for each k-mer Motif in the first string from Dna
-		   	    Motif1 ← Motif
-		   	    for i = 2 to t
-		   	        form Profile from motifs Motif1, …, Motifi - 1
-		   	        Motifi ← Profile-most probable
-								k-mer in the i-th i
-								string in Dna
-		   	    Motifs ← (Motif1, …, Motift)
-		   	    if Score(Motifs) < Score(BestMotifs)
-		   	        BestMotifs ← Motifs
-		   	return BestMotifs
-	*/
 }
+
+// ----------------------------
+// BA2F functions
 
 // Run a greedy motif search using regular counts.
 func GreedyMotifSearchNoPseudocounts(dna []string, k, t int) ([]string, error) {
@@ -781,33 +719,55 @@ func GreedyMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 // Run a random motif search with pseudocounts.
 func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 
-	pseudocounts := true
+	s := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(s)
 
-	best_score := 99999
+	pseudocounts := true
 
 	var result []string
 
+	// ---------------------------------
+	// Fencepost algorithm:
+	// Create a set of random motifs and calculate
+	// their score, once, before we go into the loop.
+
+	// Create a new scored motif group to create the first profile
+	this_smm := NewScoredMotifMatrix()
+
+	// Pick a random kmer motif from each DNA string
+	var ri int
+	for i := 0; i < len(dna); i++ {
+		ri = r.Intn(len(dna[i]) - k + 1)
+		result := dna[i][ri : ri+k]
+		this_smm.AddMotif(result)
+	}
+
+	// Update the first (currently best) score
+	this_smm.UpdateScore()
+	best_score := this_smm.score
+
+	// ---------------------------------
+	// Main loop:
+	// Get the profile from our current scored
+	// motif matrix, and use it to choose the
+	// profile-most probable kmers for the next
+	// round.
 	stop_loop := false
 	for stop_loop == false {
 
-		// Create a new scored motif group to create profile
-		prof_smm := NewScoredMotifMatrix()
+		//fmt.Printf("----------------------------\n")
+		//fmt.Printf("Current motifs = %s\n", strings.Join(this_smm.motifs, " "))
+		//fmt.Printf("Current best score = %d\n", best_score)
 
-		// Pick a random kmer motif from each DNA string
-		var ri int
+		// Get profile from this_smm first
+		profile, _ := this_smm.MakeProfile(pseudocounts)
+		//fmt.Printf("Current profile = \n%v\n", profile)
+
+		// Make a new scored motif matrix
+		next_smm := NewScoredMotifMatrix()
+
+		// Loop over all dna strings
 		for i := 0; i < len(dna); i++ {
-			ri = rand.Intn(len(dna[i]) - k + 1)
-			result := dna[i][ri : ri+k]
-			prof_smm.AddMotif(result)
-		}
-
-		profile, _ := prof_smm.MakeProfile(pseudocounts)
-
-		// Create a new scored motif group to compute motif
-		this_smm := NewScoredMotifMatrix()
-
-		// Loop over all remaining dna strings
-		for i := 1; i < len(dna); i++ {
 
 			// Use the profile to find the profile-most
 			// probable kmer in this string of dna, idna
@@ -816,20 +776,48 @@ func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 			// Add the profile-most probable kmer
 			// to the list of motifs
 			if len(result) > 0 {
-				this_smm.AddMotif(result)
+				next_smm.AddMotif(result)
 			}
 
 		}
-		this_smm.UpdateScore()
+		next_smm.UpdateScore()
+		next_score := next_smm.score
 
-		if this_smm.score < best_score {
-			best_score = this_smm.score
+		//fmt.Printf("Next motifs = %s\n", strings.Join(next_smm.motifs, " "))
+		//fmt.Printf("Next score = %d\n", next_score)
+
+		if next_score < best_score {
+			best_score = next_score
+			this_smm = next_smm
+			//fmt.Printf(" +++ Next motifs are better, continuing...\n")
 		} else {
 			// This score does not improve the best score,
-			// so stop now.
+			// so stop now and return prior result.
 			result = this_smm.motifs
 			stop_loop = true
+			//fmt.Printf(" --- Next motifs are not better, ending...\n")
 		}
+
 	}
 	return result, nil
+}
+
+func ManyRandomMotifSearches(dna []string, k, t, n int) ([]string, error) {
+	result := make(map[string]int)
+	for i := 0; i < n; i += 1 {
+		bm, _ := RandomMotifSearchPseudocounts(dna, k, t)
+		sort.Slice(bm, func(i, j int) bool { return bm[i] < bm[j] })
+		bmstr := strings.Join(bm, " ")
+		result[bmstr] += 1
+	}
+	max_count := 0
+	max_motif := ""
+	for best_motifs, best_count := range result {
+		if best_count > max_count {
+			max_count = best_count
+			max_motif = best_motifs
+		}
+	}
+	motifs := strings.Split(max_motif, " ")
+	return motifs, nil
 }

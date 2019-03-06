@@ -3,6 +3,7 @@ package rosalind
 import (
 	"fmt"
 	"log"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -500,7 +501,76 @@ func TestProfileConstruction(t *testing.T) {
 	}
 
 	if !passed_test {
-		msg := fmt.Sprintf("Error testing GreedyMotifSearch(): found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
+		msg := fmt.Sprintf("Error testing MakeProfile() (no pseudocounts) for Scored Motif Matrix: found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
+			gold, result)
+		t.Error(msg)
+	}
+}
+
+func TestProfilePseudocountsConstruction(t *testing.T) {
+	// Test case:
+	//
+	// TAAC
+	// GTCT
+	// ACTA
+	// AGGT
+	//
+	// Results in the profile:
+	//
+	// 0.375	0.250	0.250	0.250
+	// 0.125	0.250	0.250	0.250
+	// 0.250	0.250	0.250	0.125
+	// 0.250	0.250	0.250	0.375
+
+	motifs := []string{
+		"TAAC",
+		"GTCT",
+		"ACTA",
+		"AGGT",
+	}
+	gold := [][]float32{
+		[]float32{0.375, 0.250, 0.250, 0.250},
+		[]float32{0.125, 0.250, 0.250, 0.250},
+		[]float32{0.250, 0.250, 0.250, 0.125},
+		[]float32{0.250, 0.250, 0.250, 0.375},
+	}
+
+	smg := NewScoredMotifMatrix()
+
+	for _, motif := range motifs {
+		smg.AddMotif(motif)
+	}
+
+	result, err := smg.MakeProfile(true)
+	if err != nil {
+		t.Error(err)
+	}
+
+	var passed_test bool
+	passed_test = true
+	if len(gold) == len(result) {
+		if len(gold[0]) == len(result[0]) {
+			// Dimensions match,
+			// so now we compare element-wise.
+			for i := 0; i < len(gold); i++ {
+				for j := 0; j < len(gold[0]); j++ {
+					// Comparing floats,
+					// so don't use !=
+					if !TheseFloatsAreEqual(gold[i][j], result[i][j]) {
+						passed_test = false
+						break
+					}
+				}
+			}
+		} else {
+			passed_test = false
+		}
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing MakeProfile() (with pseudocounts) for Scored Motif Matrix: found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
 			gold, result)
 		t.Error(msg)
 	}
@@ -725,33 +795,38 @@ func TestRandomMotifSearchPseudocounts(t *testing.T) {
 		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
 	}
 
-	result, err := RandomMotifSearchPseudocounts(dna, k_in, t_in)
+	//motifs, err := RandomMotifSearchPseudocounts(dna, k_in, t_in)
+	motifs, err := ManyRandomMotifSearches(dna, k_in, t_in, 1000)
 	if err != nil {
 		t.Error(err)
 	}
 
-	// Element-wise comparison of gold and computed result
+	gold_smm := NewScoredMotifMatrix()
+	for _, gold_motif := range gold {
+		gold_smm.AddMotif(gold_motif)
+	}
+	gold_smm.UpdateScore()
+	gold_score := gold_smm.score
+
+	lead_smm := NewScoredMotifMatrix()
+	for _, lead_motif := range motifs {
+		lead_smm.AddMotif(lead_motif)
+	}
+	lead_smm.UpdateScore()
+	lead_score := lead_smm.score
+
 	var passed_test bool
-	passed_test = true
-	if len(gold) == len(result) {
-		for i := 0; i < len(result); i++ {
-			if result[i] != gold[i] {
-				passed_test = false
-				break
-			}
-		}
-	} else {
-		/*
-			passed_test = false
-		*/
-		// just Volkswagen it
+	pct_err := math.Abs(float64(gold_score-lead_score) / float64(gold_score))
+	if pct_err < 0.40 {
 		passed_test = true
+	} else {
+		passed_test = false
 	}
 
 	if !passed_test {
 		msg := fmt.Sprintf("Error testing RandomMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
-			strings.Join(gold, " "),
-			strings.Join(result, " "))
+			strings.Join(gold_smm.motifs, " "),
+			strings.Join(lead_smm.motifs, " "))
 		t.Error(msg)
 	}
 }
