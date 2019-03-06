@@ -55,7 +55,8 @@ func BA2f(filename string) {
 		dna[iA] = lines[iL]
 	}
 
-	result, _ := rosa.RandomMotifSearchPseudocounts(dna, k, t)
+	n := 1000
+	result, _ := rosa.ManyRandomMotifSearches(dna, k, t, n)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
