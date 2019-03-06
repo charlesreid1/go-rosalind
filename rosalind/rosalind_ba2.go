@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"sort"
 	"strings"
 	"time"
 )
@@ -717,14 +716,15 @@ func GreedyMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 // BA2F functions
 
 // Run a random motif search with pseudocounts.
-func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
+func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, int, error) {
 
 	s := rand.NewSource(time.Now().UnixNano())
 	r := rand.New(s)
 
 	pseudocounts := true
 
-	var result []string
+	var result_motifs []string
+	var result_score int
 
 	// ---------------------------------
 	// Fencepost algorithm:
@@ -789,35 +789,32 @@ func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 		if next_score < best_score {
 			best_score = next_score
 			this_smm = next_smm
-			//fmt.Printf(" +++ Next motifs are better, continuing...\n")
+			//fmt.Printf(" +++ Next motifs are better... continuing... new score = %d\n", best_score)
 		} else {
 			// This score does not improve the best score,
 			// so stop now and return prior result.
-			result = this_smm.motifs
+			result_motifs = this_smm.motifs
+			result_score = this_smm.score
 			stop_loop = true
-			//fmt.Printf(" --- Next motifs are not better, ending...\n")
+			//fmt.Printf(" --- Next motifs are not better... ending... old score = %d\n", best_score)
 		}
 
 	}
-	return result, nil
+	return result_motifs, result_score, nil
 }
 
 func ManyRandomMotifSearches(dna []string, k, t, n int) ([]string, error) {
-	result := make(map[string]int)
+	// Initial best motifs
+	min_bm, min_bm_score, _ := RandomMotifSearchPseudocounts(dna, k, t)
+
+	// Run algorithm n times,
+	// look for lowest score
 	for i := 0; i < n; i += 1 {
-		bm, _ := RandomMotifSearchPseudocounts(dna, k, t)
-		sort.Slice(bm, func(i, j int) bool { return bm[i] < bm[j] })
-		bmstr := strings.Join(bm, " ")
-		result[bmstr] += 1
-	}
-	max_count := 0
-	max_motif := ""
-	for best_motifs, best_count := range result {
-		if best_count > max_count {
-			max_count = best_count
-			max_motif = best_motifs
+		bm, bm_score, _ := RandomMotifSearchPseudocounts(dna, k, t)
+		if bm_score < min_bm_score {
+			min_bm_score = bm_score
+			min_bm = bm
 		}
 	}
-	motifs := strings.Split(max_motif, " ")
-	return motifs, nil
+	return min_bm, nil
 }

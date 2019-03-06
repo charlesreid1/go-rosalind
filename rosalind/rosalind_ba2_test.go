@@ -795,8 +795,8 @@ func TestRandomMotifSearchPseudocounts(t *testing.T) {
 		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
 	}
 
-	//motifs, err := RandomMotifSearchPseudocounts(dna, k_in, t_in)
-	motifs, err := ManyRandomMotifSearches(dna, k_in, t_in, 1000)
+	n := 1000
+	motifs, err := ManyRandomMotifSearches(dna, k_in, t_in, n)
 	if err != nil {
 		t.Error(err)
 	}
