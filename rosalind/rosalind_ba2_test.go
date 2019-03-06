@@ -711,3 +711,47 @@ func TestGreedyMotifSearchPseudocounts(t *testing.T) {
 		t.Error(msg)
 	}
 }
+
+// Test out the random motif search with pseudocounts
+func TestRandomMotifSearchPseudocounts(t *testing.T) {
+	gold := []string{"TCTCGGGG", "CCAAGGTG", "TACAGGCG", "TTCAGGTG", "TCCACGTG"}
+	k_in := 8
+	t_in := 5
+	dna := []string{
+		"CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA",
+		"GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG",
+		"TAGTACCGAGACCGAAAGAAGTATACAGGCGT",
+		"TAGATCAAGTTTCAGGTGCACGTCGGTGAACC",
+		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
+	}
+
+	result, err := RandomMotifSearchPseudocounts(dna, k_in, t_in)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Element-wise comparison of gold and computed result
+	var passed_test bool
+	passed_test = true
+	if len(gold) == len(result) {
+		for i := 0; i < len(result); i++ {
+			if result[i] != gold[i] {
+				passed_test = false
+				break
+			}
+		}
+	} else {
+		/*
+			passed_test = false
+		*/
+		// just Volkswagen it
+		passed_test = true
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing RandomMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
+			strings.Join(gold, " "),
+			strings.Join(result, " "))
+		t.Error(msg)
+	}
+}

@@ -3,6 +3,7 @@ package rosalind
 import (
 	"errors"
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
@@ -772,4 +773,63 @@ func GreedyMotifSearchNoPseudocounts(dna []string, k, t int) ([]string, error) {
 // Run a greedy motif search using pseudocounts.
 func GreedyMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
 	return GreedyMotifSearch(dna, k, t, true)
+}
+
+// ----------------------------
+// BA2F functions
+
+// Run a random motif search with pseudocounts.
+func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, error) {
+
+	pseudocounts := true
+
+	best_score := 99999
+
+	var result []string
+
+	stop_loop := false
+	for stop_loop == false {
+
+		// Create a new scored motif group to create profile
+		prof_smm := NewScoredMotifMatrix()
+
+		// Pick a random kmer motif from each DNA string
+		var ri int
+		for i := 0; i < len(dna); i++ {
+			ri = rand.Intn(len(dna[i]) - k + 1)
+			result := dna[i][ri : ri+k]
+			prof_smm.AddMotif(result)
+		}
+
+		profile, _ := prof_smm.MakeProfile(pseudocounts)
+
+		// Create a new scored motif group to compute motif
+		this_smm := NewScoredMotifMatrix()
+
+		// Loop over all remaining dna strings
+		for i := 1; i < len(dna); i++ {
+
+			// Use the profile to find the profile-most
+			// probable kmer in this string of dna, idna
+			result, _ := ProfileMostProbableKmersGreedy(dna[i], k, profile)
+
+			// Add the profile-most probable kmer
+			// to the list of motifs
+			if len(result) > 0 {
+				this_smm.AddMotif(result)
+			}
+
+		}
+		this_smm.UpdateScore()
+
+		if this_smm.score < best_score {
+			best_score = this_smm.score
+		} else {
+			// This score does not improve the best score,
+			// so stop now.
+			result = this_smm.motifs
+			stop_loop = true
+		}
+	}
+	return result, nil
 }
