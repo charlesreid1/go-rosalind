@@ -817,7 +817,7 @@ func TestRandomMotifSearchPseudocounts(t *testing.T) {
 
 	var passed_test bool
 	pct_err := math.Abs(float64(gold_score-lead_score) / float64(gold_score))
-	if pct_err < 0.10 {
+	if pct_err < 0.40 {
 		passed_test = true
 	} else {
 		passed_test = false
