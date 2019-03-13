@@ -60,5 +60,5 @@ func BA2f(filename string) {
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(strings.Join(result, " "))
+	fmt.Println(strings.Join(result, "\n"))
 }
