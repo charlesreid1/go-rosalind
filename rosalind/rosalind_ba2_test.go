@@ -795,7 +795,7 @@ func TestRandomMotifSearchPseudocounts(t *testing.T) {
 		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
 	}
 
-	n := 1000
+	n := 100
 	motifs, err := ManyRandomMotifSearches(dna, k_in, t_in, n)
 	if err != nil {
 		t.Error(err)
@@ -825,6 +825,56 @@ func TestRandomMotifSearchPseudocounts(t *testing.T) {
 
 	if !passed_test {
 		msg := fmt.Sprintf("Error testing RandomMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
+			strings.Join(gold_smm.motifs, " "),
+			strings.Join(lead_smm.motifs, " "))
+		t.Error(msg)
+	}
+}
+
+// Test out the gibbs sampler
+func TestGibbsSampler(t *testing.T) {
+	gold := []string{"TCTCGGGG", "CCAAGGTG", "TACAGGCG", "TTCAGGTG", "TCCACGTG"}
+	k_in := 8
+	t_in := 5
+	n_in := 100
+	dna := []string{
+		"CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA",
+		"GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG",
+		"TAGTACCGAGACCGAAAGAAGTATACAGGCGT",
+		"TAGATCAAGTTTCAGGTGCACGTCGGTGAACC",
+		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
+	}
+
+	n_starts := 20
+	motifs, err := ManyGibbsSamplers(dna, k_in, t_in, n_in, n_starts)
+	if err != nil {
+		t.Error(err)
+	}
+
+	gold_smm := NewScoredMotifMatrix()
+	for _, gold_motif := range gold {
+		gold_smm.AddMotif(gold_motif)
+	}
+	gold_smm.UpdateScore()
+	gold_score := gold_smm.score
+
+	lead_smm := NewScoredMotifMatrix()
+	for _, lead_motif := range motifs {
+		lead_smm.AddMotif(lead_motif)
+	}
+	lead_smm.UpdateScore()
+	lead_score := lead_smm.score
+
+	var passed_test bool
+	pct_err := math.Abs(float64(gold_score-lead_score) / float64(gold_score))
+	if pct_err < 0.40 {
+		passed_test = true
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing GibbsSampler(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
 			strings.Join(gold_smm.motifs, " "),
 			strings.Join(lead_smm.motifs, " "))
 		t.Error(msg)

@@ -737,6 +737,7 @@ func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, int, error
 	// Pick a random kmer motif from each DNA string
 	var ri int
 	for i := 0; i < len(dna); i++ {
+		// Non-inclusive [0,n)
 		ri = r.Intn(len(dna[i]) - k + 1)
 		result := dna[i][ri : ri+k]
 		this_smm.AddMotif(result)
@@ -803,6 +804,8 @@ func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, int, error
 	return result_motifs, result_score, nil
 }
 
+// Driver function to run multiple random motif searches
+// and keep the best of all runs.
 func ManyRandomMotifSearches(dna []string, k, t, n int) ([]string, error) {
 	// Initial best motifs
 	min_bm, min_bm_score, _ := RandomMotifSearchPseudocounts(dna, k, t)
@@ -811,6 +814,110 @@ func ManyRandomMotifSearches(dna []string, k, t, n int) ([]string, error) {
 	// look for lowest score
 	for i := 0; i < n; i += 1 {
 		bm, bm_score, _ := RandomMotifSearchPseudocounts(dna, k, t)
+		if bm_score < min_bm_score {
+			min_bm_score = bm_score
+			min_bm = bm
+		}
+	}
+	return min_bm, nil
+}
+
+// ----------------------------
+// BA2G functions
+
+// Implement a Gibbs sampler with pseudocounts
+// to generate Profile-randomly generated kmers
+// in a string Text.
+func GibbsSampler(dna []string, k, t, n int) ([]string, int, error) {
+
+	s := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(s)
+
+	pseudocounts := true
+
+	// Create a new scored motif group to create the first profile
+	this_smm := NewScoredMotifMatrix()
+
+	// Pick a random kmer motif from each DNA string
+	var ri int
+	for i := 0; i < len(dna); i++ {
+		// Non-inclusive [0,n)
+		ri = r.Intn(len(dna[i]) - k + 1)
+		result := dna[i][ri : ri+k]
+		this_smm.AddMotif(result)
+	}
+
+	// Update the first (currently best) score
+	this_smm.UpdateScore()
+
+	// ---------------------------------
+	// Main loop:
+	// Pick out a random motif, and hold it out
+	// while we calculate a profile and a resulting
+	// profile-most-probable from all remaining
+	// motifs. If the motif score improves,
+	// keep the new motifs, otherwise toss 'em.
+	for j := 0; j < n; j++ {
+
+		// Non-inclusive [0,n)
+		ri = r.Intn(t)
+
+		//// Hold out a random motif from
+		//// the current scored motif matrix
+		//// (this_smm)
+		//holdout = this_smm.motifs[ri]
+
+		// Make a new scored motif matrix that
+		// holds out the hold out motif
+		holdout_smm := NewScoredMotifMatrix()
+
+		// Assemble holdout scored motif matrix
+		// (add each motif one at a time, skip holdout)
+		for i := 0; i < len(dna); i++ {
+			if i != ri {
+				holdout_smm.AddMotif(dna[i])
+			}
+		}
+
+		// Make profile with holdout motif missing
+		profile, _ := holdout_smm.MakeProfile(pseudocounts)
+
+		// Use the profile to pick the
+		// profile-most-probable kmer
+		// (from DNA string ri)
+		// as our candidate motif
+		candidate_motif, _ := ProfileMostProbableKmersGreedy(dna[ri], k, profile)
+
+		// Add candidate motif to holdout motif matrix
+		holdout_smm.AddMotif(candidate_motif)
+
+		// Update the score and use it to determine if
+		// we keep the candidate motif or the old motif
+		holdout_smm.UpdateScore()
+
+		// If candidate motif leads to a better motif matrix
+		// (if holdout score > this score), toss the
+		// old motif and use the candidate motif.
+		// Otherwise, candidate motif did not improve
+		// the score, so keep the old motif.
+		if holdout_smm.score > this_smm.score {
+			this_smm.motifs[ri] = candidate_motif
+		}
+	}
+	return this_smm.motifs, this_smm.score, nil
+}
+
+// Driver function to run multiple random motif searches
+// and keep the best of all runs.
+// n is the number of inner loops in one run of the Gibbs Sampler.
+// n_starts is the number of times the Gibbs Sampler is run.
+func ManyGibbsSamplers(dna []string, k, t, n, n_starts int) ([]string, error) {
+	// Initial best motifs
+	min_bm, min_bm_score, _ := GibbsSampler(dna, k, t, n)
+
+	// Run algorithm n times
+	for i := 0; i < n_starts; i += 1 {
+		bm, bm_score, _ := GibbsSampler(dna, k, t, n)
 		if bm_score < min_bm_score {
 			min_bm_score = bm_score
 			min_bm = bm
