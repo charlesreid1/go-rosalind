@@ -53,8 +53,8 @@ def main():
             'chapter': '2',
             'problem': 'g',
             'title': 'Implement GibbsSampler',
-            'description': 'Generate probabilities of each kmer in a DNA string using its profile. Use these to assemble a list of probabilities. Use these probabilities to create a random number generator. (Probability of that pattern given the Profile, Pr(Pattern|Profile), to generate n probabilities.) GibbsSampler uses this random number generator to generate a random k-mer.',
-            'url': 'http://rosalind.info/problems/ba2f/'
+            'description': 'Generate probabilities of each kmer in a DNA string using its profile. Use these to assemble a list of probabilities. GibbsSampler uses this random number generator to generate a random k-mer.',
+            'url': 'http://rosalind.info/problems/ba2g/'
         },
     ]
     

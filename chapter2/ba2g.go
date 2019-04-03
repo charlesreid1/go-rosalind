@@ -10,16 +10,16 @@ import (
 )
 
 // Print problem description for Rosalind.info
-// Problem BA2f: Implement RandomizedMotifSearch with Pseudocounts
-func BA2fDescription() {
+// Problem BA2g: Implement GibbsSampler
+func BA2gDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA2f:",
-		"Implement RandomizedMotifSearch with Pseudocounts",
+		"Rosalind: Problem BA2g:",
+		"Implement GibbsSampler",
 		"",
-		"Re-implement problem BA2e (greedy motif search with pseudocounts) but use a random, instead of greedy, algorithm to pick motif kmers from each DNA string.",
+		"Generate probabilities of each kmer in a DNA string using its profile. Use these to assemble a list of probabilities. GibbsSampler uses this random number generator to generate a random k-mer.",
 		"",
-		"URL: http://rosalind.info/problems/ba2f/",
+		"URL: http://rosalind.info/problems/ba2g/",
 		"",
 	}
 	for _, line := range description {
@@ -28,9 +28,9 @@ func BA2fDescription() {
 }
 
 // Run the problem
-func BA2f(filename string) {
+func BA2g(filename string) {
 
-	BA2fDescription()
+	BA2gDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -56,7 +56,8 @@ func BA2f(filename string) {
 	}
 
 	n := 100
-	result, _ := rosa.ManyRandomMotifSearches(dna, k, t, n)
+	n_starts := 20
+	result, _ := rosa.ManyGibbsSamplers(dna, k, t, n, n_starts)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
