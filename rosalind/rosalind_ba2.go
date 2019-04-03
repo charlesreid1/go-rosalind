@@ -310,10 +310,7 @@ func indexOfString(list []string, item string) int {
 //
 // This particular method does not
 // pay attention to order of occurrence
-// of kmers!!!
-//
-// The greedy version pays attention
-// to the order in which kmers occur.
+// of kmers.
 func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string, error) {
 
 	nucleotides := []string{"A", "C", "G", "T"}
@@ -336,8 +333,8 @@ func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string,
 	// in the DNA string.
 	// We use the keys of this map for
 	// iterating over all kmers in the
-	// DNA string, and keys are
-	// NOT ORDERED!!!
+	// DNA string.
+	// Keys are not ordered!
 	hist, err := KmerHistogram(dna, k)
 	if err != nil {
 		return nil, err
@@ -367,6 +364,12 @@ func ProfileMostProbableKmers(dna string, k int, profile [][]float32) ([]string,
 	}
 
 	return max_prob_kmer, nil
+}
+
+// Only return the _most_ probable kmer.
+func ProfileMostProbableKmer(dna string, k int, profile [][]float32) (string, error) {
+	results, err := ProfileMostProbableKmers(dna, k, profile)
+	return results[0], err
 }
 
 // Return a list of kmers of length k that occur in a DNA string.
@@ -504,6 +507,11 @@ func (s *ScoredMotifMatrix) AddMotif(motif string) error {
 // nucleotide per position, then computes the sum of
 // the Hamming distances from that kmer for all motifs.
 func (s *ScoredMotifMatrix) UpdateScore() error {
+
+	if len(s.motifs) == 0 {
+		msg := fmt.Sprintf("Error: call to scored matrix motif UpdateScore() method failed: there are no motifs!")
+		return errors.New(msg)
+	}
 
 	// Params
 	t := len(s.motifs)
@@ -687,7 +695,10 @@ func GreedyMotifSearch(dna []string, k, t int, pseudocounts bool) ([]string, err
 			}
 		}
 
-		this_smm.UpdateScore()
+		err := this_smm.UpdateScore()
+		if err != nil {
+			return nil, err
+		}
 		if this_smm.score < best_smm.score || best_smm.score < 0 {
 			best_smm = this_smm
 		}
@@ -738,7 +749,8 @@ func RandomMotifSearchPseudocounts(dna []string, k, t int) ([]string, int, error
 	var ri int
 	for i := 0; i < len(dna); i++ {
 		// Non-inclusive [0,n)
-		ri = r.Intn(len(dna[i]) - k + 1)
+		overlap := len(dna[i]) - k + 1
+		ri = r.Intn(overlap)
 		result := dna[i][ri : ri+k]
 		this_smm.AddMotif(result)
 	}
@@ -825,9 +837,11 @@ func ManyRandomMotifSearches(dna []string, k, t, n int) ([]string, error) {
 // ----------------------------
 // BA2G functions
 
-// Implement a Gibbs sampler with pseudocounts
-// to generate Profile-randomly generated kmers
-// in a string Text.
+// Implement a Gibbs sampler with pseudocounts.
+// The Gibbs sampler starts with random kmers,
+// and samples kmers randomly generated from a
+// Profile matrix. Better sampling makes the
+// algorithm faster.
 func GibbsSampler(dna []string, k, t, n int) ([]string, int, error) {
 
 	s := rand.NewSource(time.Now().UnixNano())
@@ -835,20 +849,25 @@ func GibbsSampler(dna []string, k, t, n int) ([]string, int, error) {
 
 	pseudocounts := true
 
+	var best_motifs []string
+	var best_score int
+	var ri int
+
 	// Create a new scored motif group to create the first profile
 	this_smm := NewScoredMotifMatrix()
 
 	// Pick a random kmer motif from each DNA string
-	var ri int
 	for i := 0; i < len(dna); i++ {
 		// Non-inclusive [0,n)
-		ri = r.Intn(len(dna[i]) - k + 1)
+		overlap := len(dna[i]) - k + 1
+		ri = r.Intn(overlap)
 		result := dna[i][ri : ri+k]
 		this_smm.AddMotif(result)
 	}
 
 	// Update the first (currently best) score
 	this_smm.UpdateScore()
+	best_score = this_smm.score
 
 	// ---------------------------------
 	// Main loop:
@@ -862,49 +881,68 @@ func GibbsSampler(dna []string, k, t, n int) ([]string, int, error) {
 		// Non-inclusive [0,n)
 		ri = r.Intn(t)
 
-		//// Hold out a random motif from
-		//// the current scored motif matrix
-		//// (this_smm)
-		//holdout = this_smm.motifs[ri]
+		// Now, we hold out a random motif from
+		// the current scored motif matrix.
 
 		// Make a new scored motif matrix that
-		// holds out the hold out motif
+		// holds out that motif, and assemble it
+		// from all motifs except the holdout
 		holdout_smm := NewScoredMotifMatrix()
-
-		// Assemble holdout scored motif matrix
-		// (add each motif one at a time, skip holdout)
-		for i := 0; i < len(dna); i++ {
+		for i := 0; i < len(this_smm.motifs); i++ {
 			if i != ri {
-				holdout_smm.AddMotif(dna[i])
+				holdout_smm.AddMotif(this_smm.motifs[i])
 			}
 		}
 
 		// Make profile with holdout motif missing
-		profile, _ := holdout_smm.MakeProfile(pseudocounts)
+		profile, err := holdout_smm.MakeProfile(pseudocounts)
+		if err != nil {
+			return nil, 0, err
+		}
 
 		// Use the profile to pick the
 		// profile-most-probable kmer
 		// (from DNA string ri)
 		// as our candidate motif
-		candidate_motif, _ := ProfileMostProbableKmersGreedy(dna[ri], k, profile)
+		var candidate_motif string
+		candidate_motif, err = ProfileMostProbableKmer(dna[ri], k, profile)
+		if err != nil {
+			return nil, 0, err
+		}
 
 		// Add candidate motif to holdout motif matrix
 		holdout_smm.AddMotif(candidate_motif)
 
 		// Update the score and use it to determine if
 		// we keep the candidate motif or the old motif
-		holdout_smm.UpdateScore()
+		err = holdout_smm.UpdateScore()
+		if err != nil {
+			return nil, 0, err
+		}
+
+		// Update current scored motif matrix with
+		// the candidate motif
+		this_smm.motifs[ri] = candidate_motif
+		err = this_smm.UpdateScore()
+		if err != nil {
+			return nil, 0, err
+		}
 
 		// If candidate motif leads to a better motif matrix
-		// (if holdout score > this score), toss the
-		// old motif and use the candidate motif.
+		// (if holdout score > this score), replace old random
+		// motif with candidate motif.
 		// Otherwise, candidate motif did not improve
 		// the score, so keep the old motif.
-		if holdout_smm.score > this_smm.score {
-			this_smm.motifs[ri] = candidate_motif
+		if this_smm.score < best_score {
+			// Clear best_motifs and copy in this_smm.motifs
+			best_motifs = []string{}
+			for cc := 0; cc < len(this_smm.motifs); cc++ {
+				best_motifs = append(best_motifs, this_smm.motifs[cc])
+			}
+			best_score = this_smm.score
 		}
 	}
-	return this_smm.motifs, this_smm.score, nil
+	return best_motifs, best_score, nil
 }
 
 // Driver function to run multiple random motif searches
@@ -912,12 +950,21 @@ func GibbsSampler(dna []string, k, t, n int) ([]string, int, error) {
 // n is the number of inner loops in one run of the Gibbs Sampler.
 // n_starts is the number of times the Gibbs Sampler is run.
 func ManyGibbsSamplers(dna []string, k, t, n, n_starts int) ([]string, error) {
+
 	// Initial best motifs
-	min_bm, min_bm_score, _ := GibbsSampler(dna, k, t, n)
+	min_bm, min_bm_score, err := GibbsSampler(dna, k, t, n)
+	if err != nil {
+		return nil, err
+	}
 
 	// Run algorithm n times
-	for i := 0; i < n_starts; i += 1 {
-		bm, bm_score, _ := GibbsSampler(dna, k, t, n)
+	for i := 0; i < n_starts-1; i += 1 {
+		// Get a new motifs and score
+		bm, bm_score, err := GibbsSampler(dna, k, t, n)
+		if err != nil {
+			return nil, err
+		}
+		// If we did better, save it
 		if bm_score < min_bm_score {
 			min_bm_score = bm_score
 			min_bm = bm
