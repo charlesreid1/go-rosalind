@@ -179,6 +179,7 @@ func TestOverlapGraph(t *testing.T) {
 	}
 }
 
+/*
 func TestOverlapGraphFile(t *testing.T) {
 
 	filename := "data/overlap_graph.txt"
@@ -266,3 +267,4 @@ func TestOverlapGraphFile(t *testing.T) {
 	}
 
 }
+*/

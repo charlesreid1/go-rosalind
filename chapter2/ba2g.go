@@ -10,16 +10,16 @@ import (
 )
 
 // Print problem description for Rosalind.info
-// Problem BA2e: Implement GreedyMotifSearch with Pseudocounts
-func BA2eDescription() {
+// Problem BA2g: Implement GibbsSampler
+func BA2gDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA2e:",
-		"Implement GreedyMotifSearch with Pseudocounts",
+		"Rosalind: Problem BA2g:",
+		"Implement GibbsSampler",
 		"",
-		"Re-implement problem BA2d (greedy motif search) using pseudocounts, which avoid setting probabilities to an absolute value of zero.",
+		"Generate probabilities of each kmer in a DNA string using its profile. Use these to assemble a list of probabilities. GibbsSampler uses this random number generator to generate a random k-mer.",
 		"",
-		"URL: http://rosalind.info/problems/ba2e/",
+		"URL: http://rosalind.info/problems/ba2g/",
 		"",
 	}
 	for _, line := range description {
@@ -28,9 +28,9 @@ func BA2eDescription() {
 }
 
 // Run the problem
-func BA2e(filename string) {
+func BA2g(filename string) {
 
-	BA2eDescription()
+	BA2gDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -44,10 +44,6 @@ func BA2e(filename string) {
 	k, _ := strconv.Atoi(params[0])
 	t, _ := strconv.Atoi(params[1])
 
-	// 1 line in the input file is for
-	// parameters.
-	// The rest of the lines are DNA strings.
-
 	// Make space for DNA strings
 	dna := make([]string, len(lines)-1)
 	iLstart := 1
@@ -59,9 +55,11 @@ func BA2e(filename string) {
 		dna[iA] = lines[iL]
 	}
 
-	result, _ := rosa.GreedyMotifSearchPseudocounts(dna, k, t)
+	n := 100
+	n_starts := 20
+	result, _ := rosa.ManyGibbsSamplers(dna, k, t, n, n_starts)
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(strings.Join(result, " "))
+	fmt.Println(strings.Join(result, "\n"))
 }

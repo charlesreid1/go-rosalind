@@ -3,6 +3,7 @@ package rosalind
 import (
 	"fmt"
 	"log"
+	"math"
 	"sort"
 	"strconv"
 	"strings"
@@ -500,7 +501,76 @@ func TestProfileConstruction(t *testing.T) {
 	}
 
 	if !passed_test {
-		msg := fmt.Sprintf("Error testing GreedyMotifSearch(): found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
+		msg := fmt.Sprintf("Error testing MakeProfile() (no pseudocounts) for Scored Motif Matrix: found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
+			gold, result)
+		t.Error(msg)
+	}
+}
+
+func TestProfilePseudocountsConstruction(t *testing.T) {
+	// Test case:
+	//
+	// TAAC
+	// GTCT
+	// ACTA
+	// AGGT
+	//
+	// Results in the profile:
+	//
+	// 0.375	0.250	0.250	0.250
+	// 0.125	0.250	0.250	0.250
+	// 0.250	0.250	0.250	0.125
+	// 0.250	0.250	0.250	0.375
+
+	motifs := []string{
+		"TAAC",
+		"GTCT",
+		"ACTA",
+		"AGGT",
+	}
+	gold := [][]float32{
+		[]float32{0.375, 0.250, 0.250, 0.250},
+		[]float32{0.125, 0.250, 0.250, 0.250},
+		[]float32{0.250, 0.250, 0.250, 0.125},
+		[]float32{0.250, 0.250, 0.250, 0.375},
+	}
+
+	smg := NewScoredMotifMatrix()
+
+	for _, motif := range motifs {
+		smg.AddMotif(motif)
+	}
+
+	result, err := smg.MakeProfile(true)
+	if err != nil {
+		t.Error(err)
+	}
+
+	var passed_test bool
+	passed_test = true
+	if len(gold) == len(result) {
+		if len(gold[0]) == len(result[0]) {
+			// Dimensions match,
+			// so now we compare element-wise.
+			for i := 0; i < len(gold); i++ {
+				for j := 0; j < len(gold[0]); j++ {
+					// Comparing floats,
+					// so don't use !=
+					if !TheseFloatsAreEqual(gold[i][j], result[i][j]) {
+						passed_test = false
+						break
+					}
+				}
+			}
+		} else {
+			passed_test = false
+		}
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing MakeProfile() (with pseudocounts) for Scored Motif Matrix: found incorrect motifs\n    Gold: %v\n    Computed: %v\n",
 			gold, result)
 		t.Error(msg)
 	}
@@ -708,6 +778,105 @@ func TestGreedyMotifSearchPseudocounts(t *testing.T) {
 		msg := fmt.Sprintf("Error testing GreedyMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
 			strings.Join(gold, " "),
 			strings.Join(result, " "))
+		t.Error(msg)
+	}
+}
+
+// Test out the random motif search with pseudocounts
+func TestRandomMotifSearchPseudocounts(t *testing.T) {
+	gold := []string{"TCTCGGGG", "CCAAGGTG", "TACAGGCG", "TTCAGGTG", "TCCACGTG"}
+	k_in := 8
+	t_in := 5
+	dna := []string{
+		"CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA",
+		"GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG",
+		"TAGTACCGAGACCGAAAGAAGTATACAGGCGT",
+		"TAGATCAAGTTTCAGGTGCACGTCGGTGAACC",
+		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
+	}
+
+	n := 100
+	motifs, err := ManyRandomMotifSearches(dna, k_in, t_in, n)
+	if err != nil {
+		t.Error(err)
+	}
+
+	gold_smm := NewScoredMotifMatrix()
+	for _, gold_motif := range gold {
+		gold_smm.AddMotif(gold_motif)
+	}
+	gold_smm.UpdateScore()
+	gold_score := gold_smm.score
+
+	lead_smm := NewScoredMotifMatrix()
+	for _, lead_motif := range motifs {
+		lead_smm.AddMotif(lead_motif)
+	}
+	lead_smm.UpdateScore()
+	lead_score := lead_smm.score
+
+	var passed_test bool
+	pct_err := math.Abs(float64(gold_score-lead_score) / float64(gold_score))
+	if pct_err < 0.40 {
+		passed_test = true
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing RandomMotifSearchPseudocounts(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
+			strings.Join(gold_smm.motifs, " "),
+			strings.Join(lead_smm.motifs, " "))
+		t.Error(msg)
+	}
+}
+
+// Test out the gibbs sampler
+func TestGibbsSampler(t *testing.T) {
+	gold := []string{"TCTCGGGG", "CCAAGGTG", "TACAGGCG", "TTCAGGTG", "TCCACGTG"}
+	k_in := 8
+	t_in := 5
+	n_in := 100
+	dna := []string{
+		"CGCCCCTCTCGGGGGTGTTCAGTAAACGGCCA",
+		"GGGCGAGGTATGTGTAAGTGCCAAGGTGCCAG",
+		"TAGTACCGAGACCGAAAGAAGTATACAGGCGT",
+		"TAGATCAAGTTTCAGGTGCACGTCGGTGAACC",
+		"AATCCACCAGCTCCACGTGCAATGTTGGCCTA",
+	}
+
+	n_starts := 20
+	motifs, err := ManyGibbsSamplers(dna, k_in, t_in, n_in, n_starts)
+	if err != nil {
+		t.Error(err)
+	}
+
+	gold_smm := NewScoredMotifMatrix()
+	for _, gold_motif := range gold {
+		gold_smm.AddMotif(gold_motif)
+	}
+	gold_smm.UpdateScore()
+	gold_score := gold_smm.score
+
+	lead_smm := NewScoredMotifMatrix()
+	for _, lead_motif := range motifs {
+		lead_smm.AddMotif(lead_motif)
+	}
+	lead_smm.UpdateScore()
+	lead_score := lead_smm.score
+
+	var passed_test bool
+	pct_err := math.Abs(float64(gold_score-lead_score) / float64(gold_score))
+	if pct_err < 0.40 {
+		passed_test = true
+	} else {
+		passed_test = false
+	}
+
+	if !passed_test {
+		msg := fmt.Sprintf("Error testing GibbsSampler(): found incorrect motifs\n    Gold: %s\n    Computed: %s\n",
+			strings.Join(gold_smm.motifs, " "),
+			strings.Join(lead_smm.motifs, " "))
 		t.Error(msg)
 	}
 }
