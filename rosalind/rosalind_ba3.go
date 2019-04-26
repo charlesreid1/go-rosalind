@@ -3,6 +3,7 @@ package rosalind
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -125,7 +126,127 @@ func ReconstructGenomeFromPath_old(contigs []string) (string, error) {
 }
 
 ////////////////////////////////
-// BA3c
+// BA3c (new and clean)
+
+// Given: arbitrary collection of kmers.
+// Create: graph having 1 node for each kmer in kmer patterns
+// Connect: kmers Pattern and Pattern' by directed edge
+// if Suffix(Pattern) is equal to Prefix(Pattern')
+// The resulting graph is called the overlap graph
+// on these k-mers, denoted Overlap(Patterns).
+//
+// Return the overlap graph Overlap(Patterns),
+// in the form of an adjacency list.
+func OverlapGraph(patterns []string) (map[string][]string, error) {
+
+	// Initialize prefix map
+	prefix_map := make(map[string][]string)
+	suffix_map := make(map[string][]string)
+
+	// Loop over each kmer
+	for _, pattern := range patterns {
+
+		// Get the prefix and suffix
+		n := len(pattern)
+		prefix := pattern[0 : n-2]
+		suffix := pattern[1 : n-1]
+
+		// Insert prefix into prefix map (prefix -> kmer)
+		prefix_map[prefix] = append(prefix_map[prefix], pattern)
+
+		// Insert suffix into suffix map (suffix -> kmer)
+		suffix_map[suffix] = append(suffix_map[suffix], pattern)
+	}
+
+	// Form the overlap graph:
+	// - check each kmer prefix and kmer suffix
+	// - create one directed edge for each pair
+	// - cartesian product of all prefix-suffix matches
+	// - edge is the p/s match
+	// - kmers with the given suffix form the edge sources
+	// - kmers with the given prefix form the edge destinations
+
+	overlap_graph := make(map[string][]string)
+
+	for prefix_key, prefix_kmers := range prefix_map {
+
+		suffix_kmers, k_in_suffix_map := suffix_map[prefix_key]
+
+		if k_in_suffix_map {
+
+			// Create one edge per pair
+			// in the Cartesian product of
+			// prefix_kmers and suffix_kmers
+			for _, source_kmer := range suffix_kmers {
+
+				// Append each new destination to the source's adjacency list
+				for _, destination_kmer := range prefix_kmers {
+
+					overlap_graph[source_kmer] = append(overlap_graph[source_kmer], destination_kmer)
+
+				}
+			}
+		}
+
+	} // end for each prefix/suffix
+
+	// map: string -> []string
+	// (source to destination kmer)
+	return overlap_graph, nil
+}
+
+func GetSortedKeys(m map[string][]string) ([]string, error) {
+
+	// Make a list of sorted keys
+	sorted_keys := make([]string, len(m))
+
+	// Populate the list of sorted keys
+	for source, _ := range m {
+		sorted_keys = append(sorted_keys, source)
+	}
+	sort.Strings(sorted_keys)
+
+	return sorted_keys, nil
+}
+
+// Print an overlap grah (map of string to []string)
+// to a string, with the following form:
+// "SRC -> DEST" (no double quotes, one edge per line)
+// and return the resulting string.
+// The edges are ordered.
+func SPrintOverlapGraph(overlap_graph map[string][]string) (string, error) {
+
+	// Get a list of sorted keys from the adjacency list
+	sorted_keys, err := GetSortedKeys(overlap_graph)
+	if err != nil {
+		return "", err
+	}
+
+	// Initialize the string array that
+	// we will use to build the final result
+	var s []string
+
+	// Now iterate over each edge,
+	// ordered by source (key)
+	for _, source := range sorted_keys {
+
+		destinations := overlap_graph[source]
+
+		// Sort the destinations too
+		sort.Strings(destinations)
+
+		for _, destination := range destinations {
+
+			s = append(s, source+" -> "+destination)
+
+		}
+	}
+
+	return strings.Join(s, "\n"), nil
+}
+
+////////////////////////////////
+// BA3c (old and wrong graph)
 
 // Given a set of k-mers, construct an overlap graph
 // where each k-mer is represented by a node, and each
@@ -133,7 +254,7 @@ func ReconstructGenomeFromPath_old(contigs []string) (string, error) {
 // the suffix (k-1 chars) of the k-mer at the source of
 // the edge overlaps with the prefix (k-1 chars) of the
 // k-mer at the head of the edge.
-func OverlapGraph(patterns []string) (DirGraph, error) {
+func OverlapGraph_old(patterns []string) (DirGraph, error) {
 
 	var g DirGraph
 

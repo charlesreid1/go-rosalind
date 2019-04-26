@@ -162,18 +162,52 @@ func TestReconstructGenomeFile(t *testing.T) {
 /////////////////////////////////
 // BA3c Test
 
-func TestOverlapGraph(t *testing.T) {
-	patterns := []string{"ATGCG", "GCATG", "CATGC", "AGGCA", "GGCAT"}
+func TestPrintOverlapGraph(t *testing.T) {
 
-	g, err := OverlapGraph(patterns)
+	gold_arr := []string{
+		"AAA -> BBB",
+		"AAA -> CCC",
+		"DDD -> EEE",
+		"DDD -> FFF",
+		"GGG -> HHH",
+		"GGG -> III",
+	}
+	gold := strings.Join(gold_arr, "\n")
+
+	og := make(map[string][]string)
+
+	og["AAA"] = []string{"BBB", "CCC"}
+	og["DDD"] = []string{"EEE", "FFF"}
+	og["GGG"] = []string{"HHH", "III"}
+
+	ogs, err := SPrintOverlapGraph(og)
 	if err != nil {
 		t.Error(err)
 	}
 
-	s := g.String()
+	if ogs != gold {
+		msg := fmt.Sprintf("Error testing SPrintOverlapGraph(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
+			gold, ogs)
+		t.Error(msg)
+	}
+}
+
+func TestOverlapGraph(t *testing.T) {
+	patterns := []string{"ATGCG", "GCATG", "CATGC", "AGGCA", "GGCAT"}
+
+	og, err := OverlapGraph(patterns)
+	if err != nil {
+		t.Error(err)
+	}
+
+	ogs, err := SPrintOverlapGraph(og)
+	if err != nil {
+		t.Error(err)
+	}
+
 	gold := "AGGCA -> GGCAT\nCATGC -> ATGCG\nGCATG -> CATGC\nGGCAT -> GCATG"
 
-	if s != gold {
+	if ogs != gold {
 		msg := "Error testing OverlapGraph(): string representation of graphs don't match"
 		t.Error(msg)
 	}
