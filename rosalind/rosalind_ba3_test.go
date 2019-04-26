@@ -216,11 +216,11 @@ func TestOverlapGraph(t *testing.T) {
 	}
 }
 
-func TestDeBruijnGraph(t *testing.T) {
+func TestDeBruijnGraphString(t *testing.T) {
 
 	k := 4
 	dna := "AAGATTCTCTAC"
-	og, err := ConstructDeBruijnGraph(dna, k)
+	og, err := ConstructDeBruijnGraphString(dna, k)
 	if err != nil {
 		t.Error(err)
 	}
@@ -234,7 +234,39 @@ func TestDeBruijnGraph(t *testing.T) {
 	gold := "AAG -> AGA\nAGA -> GAT\nATT -> TTC\nCTA -> TAC\nCTC -> TCT\nGAT -> ATT\nTCT -> CTA,CTC\nTTC -> TCT"
 
 	if ogs != gold {
-		msg := fmt.Sprintf("Error testing ConstructDeBruijnGraph(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
+		msg := fmt.Sprintf("Error testing ConstructDeBruijnGraphString(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
+			gold, ogs)
+		t.Error(msg)
+	}
+}
+
+func TestDeBruijnGraphKmers(t *testing.T) {
+
+	inputs := []string{
+		"GAGG",
+		"CAGG",
+		"GGGG",
+		"GGGA",
+		"CAGG",
+		"AGGG",
+		"GGAG",
+	}
+
+	og, err := ConstructDeBruijnGraphKmers(inputs)
+	if err != nil {
+		t.Error(err)
+	}
+
+	one_edge_per_line := false
+	ogs, err := SPrintOverlapGraph(og, one_edge_per_line)
+	if err != nil {
+		t.Error(err)
+	}
+
+	gold := "AGG -> GGG\nCAG -> AGG,AGG\nGAG -> AGG\nGGA -> GAG\nGGG -> GGA,GGG"
+
+	if ogs != gold {
+		msg := fmt.Sprintf("Error testing ConstructDeBruijnGraphString(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
 			gold, ogs)
 		t.Error(msg)
 	}

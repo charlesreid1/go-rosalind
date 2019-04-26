@@ -313,7 +313,7 @@ func SPrintOverlapGraph(overlap_graph map[string][]string, one_edge_per_line boo
 ////////////////////////////////
 // BA3d
 
-// Construct the DeBruijn graph of a string.
+// Construct the DeBruijn graph for a string of DNA.
 // Given: integer k (kmer length) and DNA string text
 // Return: DeBruijn graph, in the form of
 // an adjacency list of (k-1)mers, which maps
@@ -321,7 +321,7 @@ func SPrintOverlapGraph(overlap_graph map[string][]string, one_edge_per_line boo
 // destination suffixes (length k-1)
 // map string -> []string
 
-func ConstructDeBruijnGraph(text string, k int) (map[string][]string, error) {
+func ConstructDeBruijnGraphString(text string, k int) (map[string][]string, error) {
 
 	// Create the adjacency list
 	adj_map := make(map[string][]string)
@@ -330,6 +330,39 @@ func ConstructDeBruijnGraph(text string, k int) (map[string][]string, error) {
 	overlap := len(text) - k + 1
 	for i := 0; i < overlap; i++ {
 		kmer := text[i : i+k]
+		prefix := kmer[0 : k-1]
+		suffix := kmer[1:k]
+
+		// Create an adjacency map edge
+		// prefix -> suffix
+		adj_map[prefix] = append(adj_map[prefix], suffix)
+	}
+
+	return adj_map, nil
+}
+
+////////////////////////////////
+// BA3e
+
+// Construct the DeBruijn graph for a collection of kmers.
+// Given: a collection of kmers.
+// Return: DeBruijn graph, in the form of
+// an adjacency list of (k-1)mers.
+// Also see BA3c.
+
+func ConstructDeBruijnGraphKmers(kmers []string) (map[string][]string, error) {
+
+	// This assumes there are no repeat kmers,
+	// or that we won't see many repeat kmers.
+	// If this assumption is not true, then
+	// create a set of all kmers to remove
+	// duplicates.
+
+	// Create the adjacency list
+	adj_map := make(map[string][]string)
+
+	for _, kmer := range kmers {
+		k := len(kmer)
 		prefix := kmer[0 : k-1]
 		suffix := kmer[1:k]
 
