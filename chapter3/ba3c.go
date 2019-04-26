@@ -43,12 +43,17 @@ func BA3c(filename string) {
 		lines[i] = strings.Trim(line, " ")
 	}
 
-	g, err := rosa.OverlapGraph(lines)
+	og, err := rosa.OverlapGraph(lines)
 	if err != nil {
-		log.Fatalf("Error when calling ReconstructGenomeFromPath()")
+		log.Fatalf("Error when calling OverlapGraph()")
+	}
+
+	ogs, err := rosa.SPrintOverlapGraph(og)
+	if err != nil {
+		log.Fatalf("Error when calling SPrintOverlapGraph()")
 	}
 
 	fmt.Println("")
 	fmt.Printf("Computed result from input file: %s\n", filename)
-	fmt.Println(g.String())
+	fmt.Println(ogs)
 }
