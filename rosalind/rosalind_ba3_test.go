@@ -180,7 +180,8 @@ func TestPrintOverlapGraph(t *testing.T) {
 	og["DDD"] = []string{"EEE", "FFF"}
 	og["GGG"] = []string{"HHH", "III"}
 
-	ogs, err := SPrintOverlapGraph(og)
+	one_edge_per_line := true
+	ogs, err := SPrintOverlapGraph(og, one_edge_per_line)
 	if err != nil {
 		t.Error(err)
 	}
@@ -200,7 +201,8 @@ func TestOverlapGraph(t *testing.T) {
 		t.Error(err)
 	}
 
-	ogs, err := SPrintOverlapGraph(og)
+	one_edge_per_line := true
+	ogs, err := SPrintOverlapGraph(og, one_edge_per_line)
 	if err != nil {
 		t.Error(err)
 	}
@@ -208,97 +210,32 @@ func TestOverlapGraph(t *testing.T) {
 	gold := "AGGCA -> GGCAT\nCATGC -> ATGCG\nGCATG -> CATGC\nGGCAT -> GCATG"
 
 	if ogs != gold {
-		msg := "Error testing OverlapGraph(): string representation of graphs don't match"
+		msg := fmt.Sprintf("Error testing TestOverlapGraph(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
+			gold, ogs)
 		t.Error(msg)
 	}
 }
 
-/*
-func TestOverlapGraphFile(t *testing.T) {
+func TestDeBruijnGraph(t *testing.T) {
 
-	filename := "data/overlap_graph.txt"
-
-	// Read the contents of the input file
-	// into a single string
-	lines, err := ReadLines(filename)
-	if err != nil {
-		log.Fatalf("ReadLines: %v", err)
-	}
-
-	// Input file contents
-	// lines[0]: Input
-
-	// We have an unknown number of fragments
-	// and an unknown number of edges,
-	// but they are split by a line with
-	// "Output:"
-
-	contigs := []string{}
-	gold_edges := []string{}
-	var stop bool
-
-	// Loop over the first section of the file,
-	// containing overlapping kmers
-	stop = false
-	iL := 1
-	for stop == false {
-
-		// Abort if we prematurely reach the
-		// end of the file
-		if iL >= len(lines) {
-			msg := "Error: could not properly parse file, no line with 'Output:' found."
-			t.Error(msg)
-		}
-
-		// Get the line
-		line := lines[iL]
-
-		// Break if we reached "Output:"
-		if "Output:" == strings.Trim(line, " ") {
-			// step over this line
-			iL++
-			break
-		}
-
-		// Add line to list of contigs
-		contigs = append(contigs, strings.Trim(line, " "))
-
-		iL++
-	}
-
-	// Loop over the second section of the file,
-	// containing overlapping kmer edges
-	stop = false
-	for stop == false {
-
-		// Break if we reach the end of the file
-		if iL == len(lines) {
-			break
-		}
-
-		// Get the line
-		line := lines[iL]
-
-		// Add line to list of edges
-		gold_edges = append(gold_edges, strings.Trim(line, " "))
-
-		iL++
-	}
-
-	// Construct the graph
-	g, err := OverlapGraph(contigs)
+	k := 4
+	dna := "AAGATTCTCTAC"
+	og, err := ConstructDeBruijnGraph(dna, k)
 	if err != nil {
 		t.Error(err)
 	}
 
-	// Get the edge list representation of the graph
-	computed_edges := strings.Split(g.String(), "\n")
-
-	if !EqualStringSlices(computed_edges, gold_edges) {
-		msg := fmt.Sprintf("Error testing OverlapGraph() with file %s: edge lists do not match\n", filename)
-		msg += fmt.Sprintf("len(gold_edges) = %d\nlen(computed_edges) = %d\n", len(gold_edges), len(computed_edges))
-		t.Error(msg)
+	one_edge_per_line := false
+	ogs, err := SPrintOverlapGraph(og, one_edge_per_line)
+	if err != nil {
+		t.Error(err)
 	}
 
+	gold := "AAG -> AGA\nAGA -> GAT\nATT -> TTC\nCTA -> TAC\nCTC -> TCT\nGAT -> ATT\nTCT -> CTA,CTC\nTTC -> TCT"
+
+	if ogs != gold {
+		msg := fmt.Sprintf("Error testing ConstructDeBruijnGraph(): string representation of graphs don't match:\nGold:\n%s\n\nComputed:\n%s\n",
+			gold, ogs)
+		t.Error(msg)
+	}
 }
-*/

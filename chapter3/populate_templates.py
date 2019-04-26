@@ -28,6 +28,13 @@ def main():
             'description': 'Given a set of overlapping k-mers, construct the overlap graph and print a sorted adjacency matrix',
             'url': 'http://rosalind.info/problems/ba3c/'
         },
+        {
+            'chapter': '3',
+            'problem': 'd',
+            'title': 'Construct the DeBruijn graph of a string',
+            'description': 'Given a collection of arbitrary kmers, construct the DeBruijn graph of all overlapping (k-1)mers',
+            'url': 'http://rosalind.info/problems/ba3d/'
+        },
     ]
     
     print("Writing problem boilerplate code")

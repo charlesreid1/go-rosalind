@@ -48,7 +48,8 @@ func BA3c(filename string) {
 		log.Fatalf("Error when calling OverlapGraph()")
 	}
 
-	ogs, err := rosa.SPrintOverlapGraph(og)
+	one_edge_per_line := true
+	ogs, err := rosa.SPrintOverlapGraph(og, one_edge_per_line)
 	if err != nil {
 		log.Fatalf("Error when calling SPrintOverlapGraph()")
 	}

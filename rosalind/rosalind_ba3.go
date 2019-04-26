@@ -128,6 +128,7 @@ func ReconstructGenomeFromPath_old(contigs []string) (string, error) {
 ////////////////////////////////
 // BA3c (new and clean)
 
+// Construct the overlap graph of a collection of kmers.
 // Given: arbitrary collection of kmers.
 // Create: graph having 1 node for each kmer in kmer patterns
 // Connect: kmers Pattern and Pattern' by directed edge
@@ -195,6 +196,9 @@ func OverlapGraph(patterns []string) (map[string][]string, error) {
 	return overlap_graph, nil
 }
 
+// Utility method: given a map of string to []string,
+// extract a list of all string keys, sort them, and
+// return the sorted list.
 func GetSortedKeys(m map[string][]string) ([]string, error) {
 
 	// Make a list of sorted keys
@@ -209,12 +213,12 @@ func GetSortedKeys(m map[string][]string) ([]string, error) {
 	return sorted_keys, nil
 }
 
-// Print an overlap grah (map of string to []string)
-// to a string, with the following form:
+// Print string representation of an overlap graph
+// (map of string to []string) with the form:
 // "SRC -> DEST" (no double quotes, one edge per line)
 // and return the resulting string.
 // The edges are ordered.
-func SPrintOverlapGraph(overlap_graph map[string][]string) (string, error) {
+func SPrintOverlapGraph(overlap_graph map[string][]string, one_edge_per_line bool) (string, error) {
 
 	// Get a list of sorted keys from the adjacency list
 	sorted_keys, err := GetSortedKeys(overlap_graph)
@@ -235,69 +239,104 @@ func SPrintOverlapGraph(overlap_graph map[string][]string) (string, error) {
 		// Sort the destinations too
 		sort.Strings(destinations)
 
-		for _, destination := range destinations {
-
-			s = append(s, source+" -> "+destination)
-
+		if len(destinations) >= 1 {
+			if one_edge_per_line {
+				for _, destination := range destinations {
+					s = append(s, source+" -> "+destination)
+				}
+			} else {
+				s = append(s, source+" -> "+strings.Join(destinations, ","))
+			}
 		}
 	}
 
 	return strings.Join(s, "\n"), nil
 }
 
+// ////////////////////////////////
+// // BA3c (old and wrong graph)
+//
+// // Given a set of k-mers, construct an overlap graph
+// // where each k-mer is represented by a node, and each
+// // directed edge represents a pair of k-mers such that
+// // the suffix (k-1 chars) of the k-mer at the source of
+// // the edge overlaps with the prefix (k-1 chars) of the
+// // k-mer at the head of the edge.
+// func OverlapGraph_old(patterns []string) (DirGraph, error) {
+//
+// 	var g DirGraph
+//
+// 	// Add every k-mer as a node to the overlap graph
+// 	k := len(patterns[0])
+// 	for _, pattern := range patterns {
+// 		n := Node{pattern}
+// 		g.AddNode(&n)
+//
+// 		// Verify k-mers are all same length
+// 		if len(pattern) != k {
+// 			msg := fmt.Sprintf("Error: kmer lengths do not match, k = %d but len(\"%s\") = %d\n",
+// 				k, pattern, len(pattern))
+// 			return g, errors.New(msg)
+// 		}
+// 	}
+//
+// 	// Iterate pairwise through the input patterns
+// 	// to determine which pairs should have edges
+// 	// and in which direction
+// 	for i, pattern1 := range patterns {
+// 		for j, pattern2 := range patterns {
+// 			if j > i {
+// 				prefix1 := pattern1[:k-1]
+// 				suffix1 := pattern1[1:]
+//
+// 				prefix2 := pattern2[:k-1]
+// 				suffix2 := pattern2[1:]
+//
+// 				if suffix1 == prefix2 {
+// 					// 1 -> 2
+// 					n1 := g.GetNode(pattern1)
+// 					n2 := g.GetNode(pattern2)
+// 					g.AddEdge(n1, n2)
+// 				} else if suffix2 == prefix1 {
+// 					// 2 -> 1
+// 					n2 := g.GetNode(pattern2)
+// 					n1 := g.GetNode(pattern1)
+// 					g.AddEdge(n2, n1)
+// 				}
+// 			}
+// 		}
+// 	}
+//
+// 	return g, nil
+// }
+
 ////////////////////////////////
-// BA3c (old and wrong graph)
+// BA3d
 
-// Given a set of k-mers, construct an overlap graph
-// where each k-mer is represented by a node, and each
-// directed edge represents a pair of k-mers such that
-// the suffix (k-1 chars) of the k-mer at the source of
-// the edge overlaps with the prefix (k-1 chars) of the
-// k-mer at the head of the edge.
-func OverlapGraph_old(patterns []string) (DirGraph, error) {
+// Construct the DeBruijn graph of a string.
+// Given: integer k (kmer length) and DNA string text
+// Return: DeBruijn graph, in the form of
+// an adjacency list of (k-1)mers, which maps
+// source prefixes (length k-1) to
+// destination suffixes (length k-1)
+// map string -> []string
 
-	var g DirGraph
+func ConstructDeBruijnGraph(text string, k int) (map[string][]string, error) {
 
-	// Add every k-mer as a node to the overlap graph
-	k := len(patterns[0])
-	for _, pattern := range patterns {
-		n := Node{pattern}
-		g.AddNode(&n)
+	// Create the adjacency list
+	adj_map := make(map[string][]string)
 
-		// Verify k-mers are all same length
-		if len(pattern) != k {
-			msg := fmt.Sprintf("Error: kmer lengths do not match, k = %d but len(\"%s\") = %d\n",
-				k, pattern, len(pattern))
-			return g, errors.New(msg)
-		}
+	// Sliding window over each kmer
+	overlap := len(text) - k + 1
+	for i := 0; i < overlap; i++ {
+		kmer := text[i : i+k]
+		prefix := kmer[0 : k-1]
+		suffix := kmer[1:k]
+
+		// Create an adjacency map edge
+		// prefix -> suffix
+		adj_map[prefix] = append(adj_map[prefix], suffix)
 	}
 
-	// Iterate pairwise through the input patterns
-	// to determine which pairs should have edges
-	// and in which direction
-	for i, pattern1 := range patterns {
-		for j, pattern2 := range patterns {
-			if j > i {
-				prefix1 := pattern1[:k-1]
-				suffix1 := pattern1[1:]
-
-				prefix2 := pattern2[:k-1]
-				suffix2 := pattern2[1:]
-
-				if suffix1 == prefix2 {
-					// 1 -> 2
-					n1 := g.GetNode(pattern1)
-					n2 := g.GetNode(pattern2)
-					g.AddEdge(n1, n2)
-				} else if suffix2 == prefix1 {
-					// 2 -> 1
-					n2 := g.GetNode(pattern2)
-					n1 := g.GetNode(pattern1)
-					g.AddEdge(n2, n1)
-				}
-			}
-		}
-	}
-
-	return g, nil
+	return adj_map, nil
 }
