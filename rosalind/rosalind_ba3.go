@@ -33,13 +33,44 @@ func KmerComposition(input string, k int) ([]string, error) {
 }
 
 ////////////////////////////////
-// BA3b
+// BA3b (new and clean)
+
+// Given a set of kmers that overlap such that
+// the last k-1 symbols of pattern i
+// equal the first k-1 symbols of pattern i+1
+// for all i = 1 to n-1,
+// return a string of length k + n - 1
+// where the ith kmer is equal to pattern i
+func ReconstructGenomeFromPath(contigs []string) (string, error) {
+
+	n := len(contigs)
+	assembled := []string{}
+	for i := 0; i < n; i++ {
+		if i == 0 {
+			// append entire contig
+			assembled = append(assembled, contigs[i])
+		} else {
+			// convert last char to string, and append
+			assembled = append(assembled, string(contigs[i][len(contigs[i])-1]))
+		}
+	}
+	return strings.Join(assembled, ""), nil
+
+}
+
+////////////////////////////////
+// BA3b (old and over-complicated)
 
 // Given a genome path, i.e., a set of k-mers that
 // overlap by some unknown number (up to k-1) of
 // characters each, assemble the paths into a
 // single string containing the genome.
-func ReconstructGenomeFromPath(contigs []string) (string, error) {
+//
+// Note: This solved a problem that is slightly more
+// general than the problem actually given - here we
+// assume the number of characters overlapping is unknown,
+// but the problem on Rosalind.info says it's always 1.
+func ReconstructGenomeFromPath_old(contigs []string) (string, error) {
 
 	pieces := []string{}
 	for i := 0; i < len(contigs)-1; i++ {
