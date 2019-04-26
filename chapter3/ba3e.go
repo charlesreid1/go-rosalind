@@ -3,22 +3,22 @@ package rosalindchapter3
 import (
 	"fmt"
 	"log"
-	"strconv"
+	"strings"
 
 	rosa "github.com/charlesreid1/go-rosalind/rosalind"
 )
 
 // Print problem description for Rosalind.info
-// Problem BA3d: Construct the DeBruijn graph of a string
-func BA3dDescription() {
+// Problem BA3e: Construct the DeBruijn graph of a collection of kmers
+func BA3eDescription() {
 	description := []string{
 		"-----------------------------------------",
-		"Rosalind: Problem BA3d:",
-		"Construct the DeBruijn graph of a string",
+		"Rosalind: Problem BA3e:",
+		"Construct the DeBruijn graph of a collection of kmers",
 		"",
-		"Given a DNA input string, construct the DeBruijn graph of all overlapping (k-1)mers",
+		"Given a collection of arbitrary kmers, construct the DeBruijn graph of all overlapping (k-1)mers",
 		"",
-		"URL: http://rosalind.info/problems/ba3d/",
+		"URL: http://rosalind.info/problems/ba3e/",
 		"",
 	}
 	for _, line := range description {
@@ -27,9 +27,9 @@ func BA3dDescription() {
 }
 
 // Run the problem
-func BA3d(filename string) {
+func BA3e(filename string) {
 
-	BA3dDescription()
+	BA3eDescription()
 
 	// Read the contents of the input file
 	// into a single string
@@ -38,14 +38,15 @@ func BA3d(filename string) {
 		log.Fatalf("rosa.ReadLines: %v", err)
 	}
 
-	// Input file contents
-	k, _ := strconv.Atoi(lines[0])
-	dna := lines[1]
+	// Trim each line and there are your kmers
+	for i, line := range lines {
+		lines[i] = strings.Trim(line, " ")
+	}
 
 	// Make the De Bruijn graph
-	dbg, err := rosa.ConstructDeBruijnGraphString(dna, k)
+	dbg, err := rosa.ConstructDeBruijnGraphKmers(lines)
 	if err != nil {
-		log.Fatalf("Error constructing DeBruijn graph from string: %v", err)
+		log.Fatalf("Error constructing DeBruijn graph from kmers: %v", err)
 	}
 
 	one_edge_per_line := false

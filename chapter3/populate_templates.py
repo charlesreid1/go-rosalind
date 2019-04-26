@@ -32,8 +32,15 @@ def main():
             'chapter': '3',
             'problem': 'd',
             'title': 'Construct the DeBruijn graph of a string',
-            'description': 'Given a collection of arbitrary kmers, construct the DeBruijn graph of all overlapping (k-1)mers',
+            'description': 'Given a DNA input string, construct the DeBruijn graph of all overlapping (k-1)mers',
             'url': 'http://rosalind.info/problems/ba3d/'
+        },
+        {
+            'chapter': '3',
+            'problem': 'e',
+            'title': 'Construct the DeBruijn graph of a collection of kmers',
+            'description': 'Given a collection of arbitrary kmers, construct the DeBruijn graph of all overlapping (k-1)mers',
+            'url': 'http://rosalind.info/problems/ba3e/'
         },
     ]
     
